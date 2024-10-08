@@ -12,9 +12,13 @@ function FloatingObject({ position, color, label, onClick }) {
 
   useFrame(({ clock }) => {
     if (!isHovered) {
-      // Only apply movement when not hovered
       ref.current.position.y = position[1] + Math.sin(clock.getElapsedTime()) * 0.5;
     }
+    ref.current.scale.set(
+      isHovered ? 1.2 + Math.sin(clock.getElapsedTime() * 3) * 0.05 : 1,
+      isHovered ? 1.2 + Math.sin(clock.getElapsedTime() * 3) * 0.05 : 1,
+      isHovered ? 1.2 + Math.sin(clock.getElapsedTime() * 3) * 0.05 : 1
+    );
   });
 
   const handleMouseEnter = () => {
@@ -26,8 +30,8 @@ function FloatingObject({ position, color, label, onClick }) {
   };
 
   const handleClick = () => {
-    gsap.to(ref.current.scale, { x: 1.2, y: 1.2, z: 1.2, duration: 0.2, yoyo: true, repeat: 1 });
-    gsap.to(ref.current.material.emissive, { r: 1, g: 1, b: 1, duration: 0.5, yoyo: true, repeat: 1 });
+    gsap.to(ref.current.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.2, yoyo: true, repeat: 1 });
+    gsap.to(ref.current.rotation, { y: `+=${Math.PI}`, duration: 0.6 });
     onClick(label);
   };
 
@@ -40,7 +44,7 @@ function FloatingObject({ position, color, label, onClick }) {
       onClick={handleClick}
     >
       <Sphere args={[1, 32, 32]}>
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} />
+        <meshStandardMaterial color={color} emissive={isHovered ? color : 'black'} emissiveIntensity={isHovered ? 2 : 0.5} />
       </Sphere>
       <Html distanceFactor={10}>
         <div style={{ color: 'white', textAlign: 'center', fontWeight: 'bold' }}>{label}</div>
@@ -49,12 +53,9 @@ function FloatingObject({ position, color, label, onClick }) {
   );
 }
 
-
 function FloatingParticles({ mousePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 } }) {
   const pointsRef = useRef();
   const particleCount = 2000;
-
-  // Initialize particle positions only once with useMemo
   const particlesPosition = useMemo(() => {
     const positions = [];
     for (let i = 0; i < particleCount; i++) {
@@ -68,7 +69,6 @@ function FloatingParticles({ mousePosition = { x: window.innerWidth / 2, y: wind
 
   useEffect(() => {
     if (pointsRef.current) {
-      // Set initial positions for the buffer geometry
       pointsRef.current.geometry.setAttribute(
         'position',
         new THREE.BufferAttribute(particlesPosition, 3)
@@ -78,7 +78,6 @@ function FloatingParticles({ mousePosition = { x: window.innerWidth / 2, y: wind
 
   useFrame(() => {
     if (!pointsRef.current) return;
-
     const positions = pointsRef.current.geometry.attributes.position;
     if (!positions) return;
 
@@ -91,15 +90,13 @@ function FloatingParticles({ mousePosition = { x: window.innerWidth / 2, y: wind
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < 2) {
-        positions.array[i] -= dx * 0.1;
-        positions.array[i + 1] -= dy * 0.1;
+        positions.array[i] -= dx * 0.05;
+        positions.array[i + 1] -= dy * 0.05;
       } else {
         positions.array[i] += (Math.random() - 0.5) * 0.05;
         positions.array[i + 1] += (Math.random() - 0.5) * 0.05;
       }
     }
-
-    // Mark the position attribute for update
     positions.needsUpdate = true;
   });
 
@@ -111,14 +108,13 @@ function FloatingParticles({ mousePosition = { x: window.innerWidth / 2, y: wind
   );
 }
 
-
 function CameraController({ mousePosition }) {
   const { camera } = useThree();
 
   useFrame(() => {
     const x = (mousePosition.x / window.innerWidth - 0.5) * 2;
     const y = (mousePosition.y / window.innerHeight - 0.5) * 2;
-    gsap.to(camera.position, { x: x * 2, y: -y * 2, duration: 0.5 });
+    gsap.to(camera.position, { x: x * 1.5, y: -y * 1.5, duration: 0.5 });
     camera.lookAt(0, 0, 0);
   });
 
@@ -225,4 +221,4 @@ const overlayStyle = {
   zIndex: 1000,
 };
 
-export default App;
+export default App
