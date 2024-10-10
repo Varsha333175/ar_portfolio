@@ -39,3 +39,10 @@ button {
 button:hover {
   background: rgba(0, 255, 255, 0.5);
 }
+
+.app {
+  overflow: hidden;
+  background: #000; /* Dark space background */
+}
+
+
