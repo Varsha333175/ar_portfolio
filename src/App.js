@@ -1,22 +1,8 @@
-import React, { useRef, Suspense } from 'react';
+import React, { useRef, Suspense, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Stars, Line, useGLTF, SpotLight, Html, Sphere } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
+import { OrbitControls, Stars, useGLTF, SpotLight, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 import './App.css';
-
-// Component to create an orbit path
-function OrbitPath({ radius, color }) {
-  const points = [];
-  const segments = 64;
-
-  for (let i = 0; i <= segments; i++) {
-    const theta = (i / segments) * Math.PI * 2;
-    points.push(new THREE.Vector3(radius * Math.cos(theta), 0, radius * Math.sin(theta)));
-  }
-
-  return <Line points={points} color={color} lineWidth={0.5} />;
-}
 
 // Component for rotating stars
 function MovingStars() {
@@ -83,51 +69,34 @@ function EllipticalOrbitPath({ radiusX, radiusZ, color }) {
   );
 }
 
-// Asteroid Belt Component
-function AsteroidBelt() {
-  const asteroids = [];
-  for (let i = 0; i < 500; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 28 + Math.random() * 2;
-    const position = new THREE.Vector3(
-      distance * Math.cos(angle),
-      (Math.random() - 0.5) * 0.5,
-      distance * Math.sin(angle)
-    );
-    asteroids.push(
-      <mesh position={position} scale={0.1}>
-        <sphereGeometry args={[0.05, 8, 8]} />
-        <meshStandardMaterial color="#888888" />
-      </mesh>
-    );
-  }
-  return <group>{asteroids}</group>;
-}
+// Video Background Component
+function VideoBackground() {
+  const [videoTexture, setVideoTexture] = useState(null);
 
-// Post-Processing Effects Component
-function Effects() {
-  return (
-    <EffectComposer>
-      <Bloom intensity={1.5} luminanceThreshold={0.1} luminanceSmoothing={0.9} />
-      <DepthOfField focusDistance={0.02} focalLength={0.02} bokehScale={2} />
-    </EffectComposer>
-  );
-}
+  useEffect(() => {
+    const video = document.createElement('video');
+    video.src = '/models/nebulamp.mp4'; // Replace with the path to your MP4 file
+    video.crossOrigin = 'anonymous';
+    video.loop = true;
+    video.muted = true;
+    video.play();
 
-// Background Nebula Sphere
-function NebulaBackground() {
-  const texture = new THREE.TextureLoader().load('/models/nebula3.webp');
-  texture.mapping = THREE.EquirectangularReflectionMapping; // Use spherical mapping for a seamless wrap
-  texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping; // This can reduce stretching at seams
+    const texture = new THREE.VideoTexture(video);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBFormat;
+
+    setVideoTexture(texture);
+  }, []);
 
   return (
-    <Sphere args={[500, 64, 64]} scale={-1}>
-      <meshBasicMaterial map={texture} side={THREE.BackSide} />
-    </Sphere>
+    videoTexture ? (
+      <Sphere args={[500, 64, 64]} scale={-1}>
+        <meshBasicMaterial map={videoTexture} side={THREE.BackSide} />
+      </Sphere>
+    ) : null
   );
 }
-
-
 
 function App() {
   return (
@@ -142,12 +111,15 @@ function App() {
         <directionalLight intensity={1} position={[-10, -10, -10]} castShadow />
         <SpotLight position={[5, 10, 10]} intensity={2} angle={0.15} penumbra={1} castShadow />
 
-        <NebulaBackground />
+        {/* Video Background */}
+        <Suspense fallback={null}>
+          <VideoBackground />
+        </Suspense>
+
         <MovingStars />
 
         <Suspense fallback={null}>
           <Sun />
-          <AsteroidBelt />
           
           {/* Mercury */}
           <OrbitingPlanet modelPath="models/Mercury_1_4878.glb" orbitRadiusX={12} orbitRadiusZ={8} speed={0.3} scale={0.001} rotationSpeed={0.005} />
@@ -164,7 +136,6 @@ function App() {
         <EllipticalOrbitPath radiusX={18} radiusZ={14} color="#F92672" />
         <EllipticalOrbitPath radiusX={24} radiusZ={20} color="#66D9EF" />
 
-        <Effects />
         <OrbitControls maxPolarAngle={Math.PI / 2.5} minPolarAngle={Math.PI / 5} enableZoom minDistance={5} maxDistance={50} />
       </Canvas>
     </div>
