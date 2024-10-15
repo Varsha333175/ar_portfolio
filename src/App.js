@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import './App.css';
 
 // Component to create an orbit path
-function EllipticalOrbitPath({ radiusX, radiusZ, color }) {
+function EllipticalOrbitPath({ radiusX, radiusZ, color, lineWidth }) {
   const points = [];
   const segments = 100;
 
@@ -20,7 +20,7 @@ function EllipticalOrbitPath({ radiusX, radiusZ, color }) {
   return (
     <line>
       <bufferGeometry attach="geometry" {...lineGeometry} />
-      <lineBasicMaterial attach="material" color={color} />
+      <lineBasicMaterial attach="material" color={color} linewidth={lineWidth} />
     </line>
   );
 }
@@ -48,33 +48,45 @@ function MovingStars() {
   );
 }
 
-// Camera control to zoom to clicked planet
-function CameraControl({ targetPosition, zoomIn }) {
+// Camera Controller Component to move the camera to selected planet
+function CameraController({ planetPosition, selectedPlanet }) {
   const { camera } = useThree();
+
   useFrame(() => {
-    if (zoomIn) {
-      camera.position.lerp(targetPosition, 0.05);
-      camera.lookAt(targetPosition);
-    } else {
-      camera.position.lerp(new THREE.Vector3(0, 15, 25), 0.05);
-      camera.lookAt(new THREE.Vector3(0, 0, 0));
+    if (selectedPlanet) {
+      camera.position.lerp(planetPosition, 0.05);
+      camera.lookAt(planetPosition);
     }
   });
+
   return null;
 }
 
+
 // Generic Planet Component
-function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, onClick, label }) {
+function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, isSelected, setPlanetPosition }) {
   const ref = useRef();
   const { scene } = useGLTF(modelPath);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime() * speed;
-    ref.current.position.set(orbitRadiusX * Math.cos(t), 0, orbitRadiusZ * Math.sin(t));
+    const x = orbitRadiusX * Math.cos(t);
+    const z = orbitRadiusZ * Math.sin(t);
+    ref.current.position.set(x, 0, z);
     ref.current.rotation.y += rotationSpeed;
+
+    if (isSelected) {
+      setPlanetPosition(new THREE.Vector3(x, 0, z));
+    }
   });
 
-  return <primitive object={scene} ref={ref} scale={scale} onClick={onClick} />;
+  return (
+    <primitive
+      object={scene}
+      ref={ref}
+      scale={isSelected ? scale * 1.2 : scale} // Increase scale when selected
+    />
+  );
 }
 
 // Sun Component with glow effect
@@ -96,152 +108,67 @@ function NebulaBackground() {
     </Sphere>
   );
 }
-
-// Overlay Component for Section Information
-function InfoOverlay({ section, onClose }) {
-  return (
-    <div className="info-overlay">
-      <h2>{section.title}</h2>
-      <p>{section.content}</p>
-      <button onClick={onClose}>Close</button>
-    </div>
-  );
-}
-
 function App() {
-  const [zoomTarget, setZoomTarget] = useState(null);
-  const [isZoomedIn, setIsZoomedIn] = useState(false);
-  const [selectedSection, setSelectedSection] = useState(null);
+  const [selectedPlanet, setSelectedPlanet] = useState(null);
+  const [planetPosition, setPlanetPosition] = useState(new THREE.Vector3(0, 0, 0));
 
-  // Portfolio sections data
-  const sections = {
-    Mercury: { title: "About Me", content: "I am a passionate developer..." },
-    Venus: { title: "Skills", content: "JavaScript, React, Node.js..." },
-    Earth: { title: "Projects", content: "Portfolio Website, E-commerce App..." },
-    Mars: { title: "Experience", content: "Worked at XYZ company..." },
-    Jupiter: { title: "Education", content: "Bachelor's in Computer Science..." },
-    Saturn: { title: "Contact", content: "Email: example@example.com..." }
-  };
-
-  const handlePlanetClick = (position, sectionName) => {
-    setZoomTarget(new THREE.Vector3(position.x, position.y, position.z));
-    setSelectedSection(sections[sectionName]);
-    setIsZoomedIn(true);
-  };
-
-  const handleBackgroundClick = () => {
-    setIsZoomedIn(false);
-    setSelectedSection(null);
+  const handlePlanetSelect = (event) => {
+    setSelectedPlanet(event.target.value);
   };
 
   return (
-    <div className="app" onClick={handleBackgroundClick}>
+    <div className="app">
+      <select onChange={handlePlanetSelect} className="planet-dropdown">
+        <option value="">Select a Planet</option>
+        <option value="Mercury">Mercury</option>
+        <option value="Venus">Venus</option>
+        <option value="Earth">Earth</option>
+        <option value="Mars">Mars</option>
+        <option value="Jupiter">Jupiter</option>
+        <option value="Saturn">Saturn</option>
+      </select>
+
       <Canvas 
         style={{ height: '100vh', width: '100vw', background: '#0a0a0a' }}
         camera={{ position: [0, 15, 25], fov: 75 }}
         shadows
       >
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} castShadow />
-        <directionalLight intensity={1} position={[-10, -10, -10]} castShadow />
-        <SpotLight position={[5, 10, 10]} intensity={2} angle={0.15} penumbra={1} castShadow />
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1} castShadow />
+        <directionalLight intensity={0.8} position={[-10, -10, -10]} castShadow />
+        <SpotLight position={[5, 10, 10]} intensity={1.5} angle={0.2} penumbra={0.9} castShadow />
 
         <NebulaBackground />
         <MovingStars />
 
-        {isZoomedIn && <CameraControl targetPosition={zoomTarget} zoomIn={isZoomedIn} />}
+        <CameraController planetPosition={planetPosition} selectedPlanet={selectedPlanet} />
 
         <Suspense fallback={null}>
           <Sun />
-          
-          {/* Mercury */}
-          <Planet 
-            modelPath="models/Mercury_1_4878.glb" 
-            orbitRadiusX={12} 
-            orbitRadiusZ={8} 
-            speed={0.4} 
-            scale={0.003} 
-            rotationSpeed={0.001} 
-            onClick={(e) => handlePlanetClick(e.object.position, "Mercury")}
-          />
-          
-          {/* Venus */}
-          <Planet 
-            modelPath="models/Venus_1_12103.glb" 
-            orbitRadiusX={18} 
-            orbitRadiusZ={14} 
-            speed={0.3} 
-            scale={0.004} 
-            rotationSpeed={0.0008} 
-            onClick={(e) => handlePlanetClick(e.object.position, "Venus")}
-          />
 
-          {/* Earth */}
-          <Planet 
-            modelPath="models/Earth_1_12756.glb" 
-            orbitRadiusX={24} 
-            orbitRadiusZ={20} 
-            speed={0.25} 
-            scale={0.004} 
-            rotationSpeed={0.0007} 
-            onClick={(e) => handlePlanetClick(e.object.position, "Earth")}
-          />
-
-          {/* Mars */}
-          <Planet 
-            modelPath="models/24881_Mars_1_6792.glb" 
-            orbitRadiusX={30} 
-            orbitRadiusZ={26} 
-            speed={0.2} 
-            scale={0.0035} 
-            rotationSpeed={0.0005} 
-            onClick={(e) => handlePlanetClick(e.object.position, "Mars")}
-          />
-
-          {/* Jupiter */}
-          <Planet 
-            modelPath="models/Jupiter_1_142984.glb" 
-            orbitRadiusX={38} 
-            orbitRadiusZ={32} 
-            speed={0.15} 
-            scale={0.008} 
-            rotationSpeed={0.0004} 
-            onClick={(e) => handlePlanetClick(e.object.position, "Jupiter")}
-          />
-
-          {/* Saturn */}
-          <Planet 
-            modelPath="models/Saturn_1_120536.glb" 
-            orbitRadiusX={46} 
-            orbitRadiusZ={40} 
-            speed={0.1} 
-            scale={0.007} 
-            rotationSpeed={0.0003} 
-            onClick={(e) => handlePlanetClick(e.object.position, "Saturn")}
-          />
+          {/* Planets with conditional selection */}
+          <Planet modelPath="models/Mercury_1_4878.glb" orbitRadiusX={12} orbitRadiusZ={8} speed={0.1} scale={0.003} rotationSpeed={0.002} isSelected={selectedPlanet === "Mercury"} setPlanetPosition={setPlanetPosition} />
+          <Planet modelPath="models/Venus_1_12103.glb" orbitRadiusX={18} orbitRadiusZ={14} speed={0.08} scale={0.004} rotationSpeed={0.0015} isSelected={selectedPlanet === "Venus"} setPlanetPosition={setPlanetPosition} />
+          <Planet modelPath="models/Earth_1_12756.glb" orbitRadiusX={24} orbitRadiusZ={20} speed={0.06} scale={0.004} rotationSpeed={0.0012} isSelected={selectedPlanet === "Earth"} setPlanetPosition={setPlanetPosition} />
+          <Planet modelPath="models/24881_Mars_1_6792.glb" orbitRadiusX={30} orbitRadiusZ={26} speed={0.05} scale={0.0035} rotationSpeed={0.001} isSelected={selectedPlanet === "Mars"} setPlanetPosition={setPlanetPosition} />
+          <Planet modelPath="models/Jupiter_1_142984.glb" orbitRadiusX={38} orbitRadiusZ={32} speed={0.04} scale={0.008} rotationSpeed={0.0008} isSelected={selectedPlanet === "Jupiter"} setPlanetPosition={setPlanetPosition} />
+          <Planet modelPath="models/Saturn_1_120536.glb" orbitRadiusX={46} orbitRadiusZ={40} speed={0.03} scale={0.007} rotationSpeed={0.0006} isSelected={selectedPlanet === "Saturn"} setPlanetPosition={setPlanetPosition} />
         </Suspense>
 
         {/* Orbits */}
-        <EllipticalOrbitPath radiusX={12} radiusZ={8} color="#A6E22E" />
-        <EllipticalOrbitPath radiusX={18} radiusZ={14} color="#F92672" />
-        <EllipticalOrbitPath radiusX={24} radiusZ={20} color="#66D9EF" />
-        <EllipticalOrbitPath radiusX={30} radiusZ={26} color="#FFA500" />
-        <EllipticalOrbitPath radiusX={38} radiusZ={32} color="#FF4500" />
-        <EllipticalOrbitPath radiusX={46} radiusZ={40} color="#FFD700" />
+        <EllipticalOrbitPath radiusX={12} radiusZ={8} color="#A6E22E" lineWidth={2} />
+        <EllipticalOrbitPath radiusX={18} radiusZ={14} color="#F92672" lineWidth={2} />
+        <EllipticalOrbitPath radiusX={24} radiusZ={20} color="#66D9EF" lineWidth={2} />
+        <EllipticalOrbitPath radiusX={30} radiusZ={26} color="#FFA500" lineWidth={2} />
+        <EllipticalOrbitPath radiusX={38} radiusZ={32} color="#FF4500" lineWidth={2} />
+        <EllipticalOrbitPath radiusX={46} radiusZ={40} color="#FFD700" lineWidth={2} />
 
-        <EffectComposer>
-          <Bloom intensity={1.5} luminanceThreshold={0.1} luminanceSmoothing={0.9} />
-        </EffectComposer>
-
-        <OrbitControls maxPolarAngle={Math.PI / 2.5} minPolarAngle={Math.PI / 5} enableZoom={!isZoomedIn} minDistance={5} maxDistance={70} />
+        <OrbitControls maxPolarAngle={Math.PI / 2.5} minPolarAngle={Math.PI / 5} enableZoom minDistance={5} maxDistance={70} />
       </Canvas>
-
-      {/* Info Overlay */}
-      {selectedSection && (
-        <InfoOverlay section={selectedSection} onClose={() => setSelectedSection(null)} />
-      )}
     </div>
   );
 }
 
 export default App;
+
+
