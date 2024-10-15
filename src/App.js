@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Sphere, useGLTF, SpotLight } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
+import gsap from 'gsap';
 import './App.css';
 
 // Component to create an orbit path
@@ -73,16 +74,34 @@ function NebulaBackground() {
 }
 function CameraController({ selectedPlanet, planetPositions }) {
   const { camera } = useThree();
+  const prevPlanet = useRef(null);
 
   useEffect(() => {
     if (selectedPlanet && planetPositions[selectedPlanet]) {
       const [x, y, z] = planetPositions[selectedPlanet];
-      camera.position.set(x + 5, y + 2, z + 5); // Offset the camera to ensure visibility
-      camera.lookAt(x, y, z); // Make sure the camera centers on the planet
+      
+      if (prevPlanet.current !== selectedPlanet) {
+        gsap.to(camera.position, {
+          x: x + 5,
+          y: y + 2,
+          z: z + 5,
+          duration: 2, // Duration of the animation in seconds
+          ease: "power2.out",
+          onUpdate: () => camera.lookAt(x, y, z)
+        });
+        prevPlanet.current = selectedPlanet;
+      }
     } else {
-      // Reset to original position if no planet is selected
-      camera.position.set(0, 15, 25);
-      camera.lookAt(0, 0, 0);
+      // Reset to original position smoothly when no planet is selected
+      gsap.to(camera.position, {
+        x: 0,
+        y: 15,
+        z: 25,
+        duration: 2,
+        ease: "power2.out",
+        onUpdate: () => camera.lookAt(0, 0, 0)
+      });
+      prevPlanet.current = null;
     }
   }, [selectedPlanet, planetPositions, camera]);
 
@@ -90,7 +109,13 @@ function CameraController({ selectedPlanet, planetPositions }) {
 }
 
 
-// Planet Component
+
+// EllipticalOrbitPath, MovingStars, NebulaBackground components remain the same...
+
+
+// EllipticalOrbitPath, MovingStars, NebulaBackground components remain the same...
+
+// Planet Component - updated to directly position the camera if selected
 function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, selected }) {
   const ref = useRef();
   const { scene } = useGLTF(modelPath);
@@ -101,10 +126,11 @@ function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationS
     const z = orbitRadiusZ * Math.sin(t);
 
     if (!selected) {
+      // Regular orbiting behavior
       ref.current.position.set(x, 0, z);
       ref.current.rotation.y += rotationSpeed;
     } else {
-      ref.current.position.set(0, 0, 0);
+      ref.current.position.set(0, 0, 0); // Center the planet for a "close-up" view when selected
     }
   });
 
@@ -118,16 +144,17 @@ function Sun() {
 }
 
 // Controls Component - updates the controls based on the selected planet
+// Updated Controls Component
 function Controls({ selectedPlanet, planetRef }) {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
 
   useEffect(() => {
     if (selectedPlanet && planetRef.current) {
-      controlsRef.current.target.copy(planetRef.current.position);
+      controlsRef.current.target.copy(planetRef.current.position); // Set controls to orbit the selected planet
       controlsRef.current.update();
     } else {
-      controlsRef.current.target.set(0, 0, 0);
+      controlsRef.current.target.set(0, 0, 0); // Default to solar system center
       controlsRef.current.update();
     }
   }, [selectedPlanet, planetRef]);
@@ -136,83 +163,27 @@ function Controls({ selectedPlanet, planetRef }) {
     <OrbitControls
       ref={controlsRef}
       args={[camera, gl.domElement]}
-      maxPolarAngle={Math.PI / 2.5}
-      minPolarAngle={Math.PI / 5}
       enableZoom
-      minDistance={selectedPlanet ? 1 : 5}
-      maxDistance={selectedPlanet ? 20 : 70}
+      enablePan={false} // Disable panning to focus on rotation and zoom
+      // Remove maxPolarAngle and minPolarAngle for full vertical rotation
+      // Remove minDistance and maxDistance or set to a wide range
     />
   );
 }
 
-// Unique ResumeSection Component with styles and animations
-function ResumeSection({ section }) {
-  return (
-    <div className={`resume-section ${section.replace(/\s+/g, '-').toLowerCase()}`}>
-      {section === "Professional Summary" && (
-        <div className="fade-in" style={{ backgroundColor: "#ffeb3b" }}>
-          <h2>Professional Summary</h2>
-          <p>
-            Full Stack Developer with 2+ years of experience in Java, Spring Boot, and AngularJS.
-            Skilled in optimizing APIs and improving system performance in Agile teams.
-          </p>
-        </div>
-      )}
-      {section === "Education" && (
-        <div className="slide-in" style={{ backgroundColor: "#42a5f5" }}>
-          <h2>Education</h2>
-          <p>
-            Master’s in Computer Science from the University of North Carolina at Charlotte, expected May 2024. GPA: 3.9/4.0
-          </p>
-        </div>
-      )}
-      {section === "Skills" && (
-        <div className="scale-in" style={{ backgroundColor: "#66bb6a" }}>
-          <h2>Skills</h2>
-          <p>
-            Programming Languages: Java, JavaScript, Python, Ruby, PHP. Frameworks: Spring Boot, Hibernate, AngularJS, React.
-          </p>
-        </div>
-      )}
-      {section === "Work Experience" && (
-        <div className="rotate-in" style={{ backgroundColor: "#ef5350" }}>
-          <h2>Work Experience</h2>
-          <p>
-            PwC US (Sep 2021 - Dec 2022): Architected REST APIs and redesigned user interface for improved performance.
-          </p>
-        </div>
-      )}
-      {section === "Projects" && (
-        <div className="zoom-in" style={{ backgroundColor: "#ab47bc" }}>
-          <h2>Projects</h2>
-          <p>
-            Developed a real-time communication platform and a cybersecurity encryption system, achieving high performance and security.
-          </p>
-        </div>
-      )}
-      {section === "Certifications & Leadership" && (
-        <div className="pop-in" style={{ backgroundColor: "#ffa726" }}>
-          <h2>Certifications & Leadership</h2>
-          <p>
-            Certified AWS Solutions Architect – Associate, and Java SE 11 Developer. 2nd place in a state-level hackathon.
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
 
 function App() {
   const [selectedPlanet, setSelectedPlanet] = useState(null);
-  const planetRef = useRef();
+  const planetRef = useRef(); // Reference to the currently selected planet
 
-  const sectionMapping = {
-    Mercury: "Professional Summary",
-    Venus: "Education",
-    Earth: "Skills",
-    Mars: "Work Experience",
-    Jupiter: "Projects",
-    Saturn: "Certifications & Leadership"
+  // Define the positions for each planet in an object
+  const planetPositions = {
+    Mercury: [12, 0, 8],
+    Venus: [18, 0, 14],
+    Earth: [24, 0, 20],
+    Mars: [30, 0, 26],
+    Jupiter: [38, 0, 32],
+    Saturn: [46, 0, 40],
   };
 
   return (
@@ -236,11 +207,6 @@ function App() {
         <button onClick={() => setSelectedPlanet(null)}>Reset View</button>
       </div>
 
-      {/* Display Resume Section */}
-      {selectedPlanet && (
-        <ResumeSection section={sectionMapping[selectedPlanet]} />
-      )}
-
       <Canvas
         style={{ height: '100vh', width: '100vw', background: '#0a0a0a' }}
         camera={{ position: [0, 15, 25], fov: 75 }}
@@ -251,30 +217,94 @@ function App() {
         <directionalLight intensity={1} position={[-10, -10, -10]} castShadow />
         <SpotLight position={[5, 10, 10]} intensity={2} angle={0.15} penumbra={1} castShadow />
 
+        {/* Include CameraController here */}
+        <CameraController selectedPlanet={selectedPlanet} planetPositions={planetPositions} />
+
         <NebulaBackground />
         <MovingStars />
 
         <Suspense fallback={null}>
+          {/* Sun is only visible when no planet is selected */}
           {selectedPlanet === null && <Sun />}
 
-          {/* Planet components */}
+          {/* Planets go here */}
+          {/* Mercury */}
           {(selectedPlanet === null || selectedPlanet === "Mercury") && (
-            <Planet modelPath="models/Mercury_1_4878.glb" orbitRadiusX={12} orbitRadiusZ={8} speed={0.1} scale={0.003} rotationSpeed={0.002} selected={selectedPlanet === "Mercury"} ref={selectedPlanet === "Mercury" ? planetRef : null} />
+            <Planet 
+              modelPath="models/Mercury_1_4878.glb" 
+              orbitRadiusX={12} 
+              orbitRadiusZ={8} 
+              speed={0.1} 
+              scale={0.003} 
+              rotationSpeed={0.002} 
+              selected={selectedPlanet === "Mercury"}
+              ref={selectedPlanet === "Mercury" ? planetRef : null}
+            />
           )}
+          {/* Venus */}
           {(selectedPlanet === null || selectedPlanet === "Venus") && (
-            <Planet modelPath="models/Venus_1_12103.glb" orbitRadiusX={18} orbitRadiusZ={14} speed={0.08} scale={0.004} rotationSpeed={0.0015} selected={selectedPlanet === "Venus"} ref={selectedPlanet === "Venus" ? planetRef : null} />
+            <Planet 
+              modelPath="models/Venus_1_12103.glb" 
+              orbitRadiusX={18} 
+              orbitRadiusZ={14} 
+              speed={0.08} 
+              scale={0.004} 
+              rotationSpeed={0.0015} 
+              selected={selectedPlanet === "Venus"}
+              ref={selectedPlanet === "Venus" ? planetRef : null}
+            />
           )}
+          {/* Earth */}
           {(selectedPlanet === null || selectedPlanet === "Earth") && (
-            <Planet modelPath="models/Earth_1_12756.glb" orbitRadiusX={24} orbitRadiusZ={20} speed={0.06} scale={0.004} rotationSpeed={0.0012} selected={selectedPlanet === "Earth"} ref={selectedPlanet === "Earth" ? planetRef : null} />
+            <Planet 
+              modelPath="models/Earth_1_12756.glb" 
+              orbitRadiusX={24} 
+              orbitRadiusZ={20} 
+              speed={0.06} 
+              scale={0.004} 
+              rotationSpeed={0.0012} 
+              selected={selectedPlanet === "Earth"}
+              ref={selectedPlanet === "Earth" ? planetRef : null}
+            />
           )}
+          {/* Mars */}
           {(selectedPlanet === null || selectedPlanet === "Mars") && (
-            <Planet modelPath="models/24881_Mars_1_6792.glb" orbitRadiusX={30} orbitRadiusZ={26} speed={0.05} scale={0.0035} rotationSpeed={0.001} selected={selectedPlanet === "Mars"} ref={selectedPlanet === "Mars" ? planetRef : null} />
+            <Planet 
+              modelPath="models/24881_Mars_1_6792.glb" 
+              orbitRadiusX={30} 
+              orbitRadiusZ={26} 
+              speed={0.05} 
+              scale={0.0035} 
+              rotationSpeed={0.001} 
+              selected={selectedPlanet === "Mars"}
+              ref={selectedPlanet === "Mars" ? planetRef : null}
+            />
           )}
+          {/* Jupiter */}
           {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
-            <Planet modelPath="models/Jupiter_1_142984.glb" orbitRadiusX={38} orbitRadiusZ={32} speed={0.04} scale={0.008} rotationSpeed={0.0008} selected={selectedPlanet === "Jupiter"} ref={selectedPlanet === "Jupiter" ? planetRef : null} />
+            <Planet 
+              modelPath="models/Jupiter_1_142984.glb" 
+              orbitRadiusX={38} 
+              orbitRadiusZ={32} 
+              speed={0.04} 
+              scale={0.008} 
+              rotationSpeed={0.0008} 
+              selected={selectedPlanet === "Jupiter"}
+              ref={selectedPlanet === "Jupiter" ? planetRef : null}
+            />
           )}
+          {/* Saturn */}
           {(selectedPlanet === null || selectedPlanet === "Saturn") && (
-            <Planet modelPath="models/Saturn_1_120536.glb" orbitRadiusX={46} orbitRadiusZ={40} speed={0.03} scale={0.007} rotationSpeed={0.0006} selected={selectedPlanet === "Saturn"} ref={selectedPlanet === "Saturn" ? planetRef : null} />
+            <Planet 
+              modelPath="models/Saturn_1_120536.glb" 
+              orbitRadiusX={46} 
+              orbitRadiusZ={40} 
+              speed={0.03} 
+              scale={0.007} 
+              rotationSpeed={0.0006} 
+              selected={selectedPlanet === "Saturn"}
+              ref={selectedPlanet === "Saturn" ? planetRef : null}
+            />
           )}
         </Suspense>
 
