@@ -1,0 +1,69 @@
+.resume-section {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    padding: 20px;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    font-family: Arial, sans-serif;
+    z-index: 10;
+  }
+  
+  .fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .slide-in {
+    animation: slideIn 1s ease-in-out;
+  }
+  
+  .scale-in {
+    animation: scaleIn 1s ease-in-out;
+  }
+  
+  .rotate-in {
+    animation: rotateIn 1s ease-in-out;
+  }
+  
+  .zoom-in {
+    animation: zoomIn 1s ease-in-out;
+  }
+  
+  .pop-in {
+    animation: popIn 1s ease-in-out;
+  }
+  
+  /* Keyframes for animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes scaleIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+  
+  @keyframes rotateIn {
+    from { transform: rotate(-180deg); }
+    to { transform: rotate(0deg); }
+  }
+  
+  @keyframes zoomIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  
