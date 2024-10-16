@@ -50,28 +50,6 @@ function MovingStars() {
 }
 
 // Camera Controller Component to move the camera to selected planet
-
-
-
-// Generic Planet Component
-
-
-// Sun Component with glow effect
-
-
-// Background Nebula
-function NebulaBackground() {
-  const texture = new THREE.TextureLoader().load('models/dark_nebula.webp');
-  texture.wrapS = THREE.MirroredRepeatWrapping;
-  texture.wrapT = THREE.MirroredRepeatWrapping;
-  texture.repeat.set(1, 1);
-
-  return (
-    <Sphere args={[500, 128, 128]} scale={-1}>
-      <meshBasicMaterial map={texture} side={THREE.BackSide} />
-    </Sphere>
-  );
-}
 function CameraController({ selectedPlanet, planetPositions }) {
   const { camera } = useThree();
   const prevPlanet = useRef(null);
@@ -79,20 +57,18 @@ function CameraController({ selectedPlanet, planetPositions }) {
   useEffect(() => {
     if (selectedPlanet && planetPositions[selectedPlanet]) {
       const [x, y, z] = planetPositions[selectedPlanet];
-      
       if (prevPlanet.current !== selectedPlanet) {
         gsap.to(camera.position, {
           x: x + 5,
           y: y + 2,
           z: z + 5,
-          duration: 2, // Duration of the animation in seconds
+          duration: 2,
           ease: "power2.out",
           onUpdate: () => camera.lookAt(x, y, z)
         });
         prevPlanet.current = selectedPlanet;
       }
     } else {
-      // Reset to original position smoothly when no planet is selected
       gsap.to(camera.position, {
         x: 0,
         y: 15,
@@ -108,15 +84,8 @@ function CameraController({ selectedPlanet, planetPositions }) {
   return null;
 }
 
-
-
-// EllipticalOrbitPath, MovingStars, NebulaBackground components remain the same...
-
-
-// EllipticalOrbitPath, MovingStars, NebulaBackground components remain the same...
-
-// Planet Component - updated to directly position the camera if selected
-function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, selected }) {
+// Generic Planet Component
+function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, selected, onClick }) {
   const ref = useRef();
   const { scene } = useGLTF(modelPath);
 
@@ -126,57 +95,76 @@ function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationS
     const z = orbitRadiusZ * Math.sin(t);
 
     if (!selected) {
-      // Regular orbiting behavior
       ref.current.position.set(x, 0, z);
       ref.current.rotation.y += rotationSpeed;
     } else {
-      ref.current.position.set(0, 0, 0); // Center the planet for a "close-up" view when selected
+      ref.current.position.set(0, 0, 0);
     }
   });
 
-  return <primitive object={scene} ref={ref} scale={scale} />;
+  return <primitive object={scene} ref={ref} scale={scale} onClick={onClick} />;
 }
 
-// Sun Component (only shown in full solar system view)
+// Sun Component with glow effect
 function Sun() {
   const { scene } = useGLTF('models/Sun_1_1391000.glb');
   return <primitive object={scene} scale={0.005} position={[0, 0, 0]} castShadow />;
 }
 
-// Controls Component - updates the controls based on the selected planet
-// Updated Controls Component
+// Background Nebula
+function NebulaBackground() {
+  const texture = new THREE.TextureLoader().load('models/dark_nebula.webp');
+  texture.wrapS = THREE.MirroredRepeatWrapping;
+  texture.wrapT = THREE.MirroredRepeatWrapping;
+  texture.repeat.set(1, 1);
+
+  return (
+    <Sphere args={[500, 128, 128]} scale={-1}>
+      <meshBasicMaterial map={texture} side={THREE.BackSide} />
+    </Sphere>
+  );
+}
+
+// Surface Overlay Component
+function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
+  if (!showSurfaceView) return null;
+
+  return (
+    <div className="surface-overlay">
+      <img src={imagePath} alt="Planet Surface" className="surface-image" />
+      <div className="overlay-content">
+        {content}
+      </div>
+      <button className="close-button" onClick={onClose}>Close</button>
+    </div>
+  );
+}
+
+// Controls Component
 function Controls({ selectedPlanet, planetRef }) {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
 
   useEffect(() => {
     if (selectedPlanet && planetRef.current) {
-      controlsRef.current.target.copy(planetRef.current.position); // Set controls to orbit the selected planet
+      controlsRef.current.target.copy(planetRef.current.position);
       controlsRef.current.update();
     } else {
-      controlsRef.current.target.set(0, 0, 0); // Default to solar system center
+      controlsRef.current.target.set(0, 0, 0);
       controlsRef.current.update();
     }
   }, [selectedPlanet, planetRef]);
 
-  return (
-    <OrbitControls
-      ref={controlsRef}
-      args={[camera, gl.domElement]}
-      enableZoom
-      enablePan={false} // Disable panning to focus on rotation and zoom
-      // Remove maxPolarAngle and minPolarAngle for full vertical rotation
-      // Remove minDistance and maxDistance or set to a wide range
-    />
-  );
+  return <OrbitControls ref={controlsRef} args={[camera, gl.domElement]} enableZoom enablePan={false} />;
 }
-
 
 function App() {
   const [selectedPlanet, setSelectedPlanet] = useState(null);
-  const planetRef = useRef(); // Reference to the currently selected planet
+  const [showSurfaceView, setShowSurfaceView] = useState(false);
+  const [surfaceImage, setSurfaceImage] = useState('');
+  const [surfaceContent, setSurfaceContent] = useState(null);
+  const planetRef = useRef();
 
-  // Define the positions for each planet in an object
   const planetPositions = {
     Mercury: [12, 0, 8],
     Venus: [18, 0, 14],
@@ -186,9 +174,46 @@ function App() {
     Saturn: [46, 0, 40],
   };
 
+  const handlePlanetClick = (planet) => {
+    setShowSurfaceView(true);
+
+    // Set surface image and content based on the selected planet
+    switch (planet) {
+      case 'Mercury':
+        setSurfaceImage('models/mercury_surface.jpg');
+        setSurfaceContent(<p>Mercury - Professional Summary</p>);
+        break;
+      case 'Venus':
+        setSurfaceImage('models/venus_surface.jpg');
+        setSurfaceContent(<p>Venus - Experience Overview</p>);
+        break;
+      case 'Earth':
+        setSurfaceImage('models/earth_surface.jpg');
+        setSurfaceContent(<p>Earth - Skill Set</p>);
+        break;
+      case 'Mars':
+        setSurfaceImage('models/mars_surface.jpg');
+        setSurfaceContent(<p>Mars - Projects</p>);
+        break;
+      case 'Jupiter':
+        setSurfaceImage('models/jupiter_surface.jpg');
+        setSurfaceContent(<p>Jupiter - Certifications</p>);
+        break;
+      case 'Saturn':
+        setSurfaceImage('models/saturn_surface.jpg');
+        setSurfaceContent(<p>Saturn - Education</p>);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCloseSurfaceView = () => {
+    setShowSurfaceView(false);
+  };
+
   return (
     <div className="app">
-      {/* Dropdown menu for selecting planets */}
       <div className="dropdown">
         <label htmlFor="planet-select">Select a planet: </label>
         <select
@@ -212,23 +237,17 @@ function App() {
         camera={{ position: [0, 15, 25], fov: 75 }}
         shadows
       >
+        <CameraController selectedPlanet={selectedPlanet} planetPositions={planetPositions} />
         <ambientLight intensity={0.8} />
         <pointLight position={[10, 10, 10]} intensity={1.5} castShadow />
-        <directionalLight intensity={1} position={[-10, -10, -10]} castShadow />
         <SpotLight position={[5, 10, 10]} intensity={2} angle={0.15} penumbra={1} castShadow />
-
-        {/* Include CameraController here */}
-        <CameraController selectedPlanet={selectedPlanet} planetPositions={planetPositions} />
 
         <NebulaBackground />
         <MovingStars />
 
         <Suspense fallback={null}>
-          {/* Sun is only visible when no planet is selected */}
           {selectedPlanet === null && <Sun />}
-
-          {/* Planets go here */}
-          {/* Mercury */}
+          {/* Planets */}
           {(selectedPlanet === null || selectedPlanet === "Mercury") && (
             <Planet 
               modelPath="models/Mercury_1_4878.glb" 
@@ -238,10 +257,10 @@ function App() {
               scale={0.003} 
               rotationSpeed={0.002} 
               selected={selectedPlanet === "Mercury"}
+              onClick={() => handlePlanetClick("Mercury")}
               ref={selectedPlanet === "Mercury" ? planetRef : null}
             />
           )}
-          {/* Venus */}
           {(selectedPlanet === null || selectedPlanet === "Venus") && (
             <Planet 
               modelPath="models/Venus_1_12103.glb" 
@@ -251,10 +270,10 @@ function App() {
               scale={0.004} 
               rotationSpeed={0.0015} 
               selected={selectedPlanet === "Venus"}
+              onClick={() => handlePlanetClick("Venus")}
               ref={selectedPlanet === "Venus" ? planetRef : null}
             />
           )}
-          {/* Earth */}
           {(selectedPlanet === null || selectedPlanet === "Earth") && (
             <Planet 
               modelPath="models/Earth_1_12756.glb" 
@@ -264,10 +283,10 @@ function App() {
               scale={0.004} 
               rotationSpeed={0.0012} 
               selected={selectedPlanet === "Earth"}
+              onClick={() => handlePlanetClick("Earth")}
               ref={selectedPlanet === "Earth" ? planetRef : null}
             />
           )}
-          {/* Mars */}
           {(selectedPlanet === null || selectedPlanet === "Mars") && (
             <Planet 
               modelPath="models/24881_Mars_1_6792.glb" 
@@ -277,10 +296,10 @@ function App() {
               scale={0.0035} 
               rotationSpeed={0.001} 
               selected={selectedPlanet === "Mars"}
+              onClick={() => handlePlanetClick("Mars")}
               ref={selectedPlanet === "Mars" ? planetRef : null}
             />
           )}
-          {/* Jupiter */}
           {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
             <Planet 
               modelPath="models/Jupiter_1_142984.glb" 
@@ -290,10 +309,10 @@ function App() {
               scale={0.008} 
               rotationSpeed={0.0008} 
               selected={selectedPlanet === "Jupiter"}
+              onClick={() => handlePlanetClick("Jupiter")}
               ref={selectedPlanet === "Jupiter" ? planetRef : null}
             />
           )}
-          {/* Saturn */}
           {(selectedPlanet === null || selectedPlanet === "Saturn") && (
             <Planet 
               modelPath="models/Saturn_1_120536.glb" 
@@ -303,12 +322,12 @@ function App() {
               scale={0.007} 
               rotationSpeed={0.0006} 
               selected={selectedPlanet === "Saturn"}
+              onClick={() => handlePlanetClick("Saturn")}
               ref={selectedPlanet === "Saturn" ? planetRef : null}
             />
           )}
         </Suspense>
 
-        {/* Orbits - Only show if no planet is selected */}
         {selectedPlanet === null && (
           <>
             <EllipticalOrbitPath radiusX={12} radiusZ={8} color="#A6E22E" lineWidth={2} />
@@ -323,10 +342,10 @@ function App() {
         <EffectComposer>
           <Bloom intensity={1.5} luminanceThreshold={0.1} luminanceSmoothing={0.9} />
         </EffectComposer>
-
-        {/* Controls component for orbiting around the selected planet or the Sun */}
         <Controls selectedPlanet={selectedPlanet} planetRef={planetRef} />
       </Canvas>
+
+      <SurfaceOverlay showSurfaceView={showSurfaceView} onClose={handleCloseSurfaceView} imagePath={surfaceImage} content={surfaceContent} />
     </div>
   );
 }
