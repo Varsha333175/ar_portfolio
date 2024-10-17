@@ -199,19 +199,19 @@ function App() {
   const [surfaceContent, setSurfaceContent] = useState(null);
   const planetRef = useRef();
 
+  // Reduced orbit distances for a compact view
   const planetPositions = {
-    Mercury: [12, 0, 8],
-    Venus: [18, 0, 14],
-    Earth: [24, 0, 20],
-    Mars: [30, 0, 26],
-    Jupiter: [38, 0, 32],
-    Saturn: [46, 0, 40],
+    Mercury: [6, 0, 3],
+    Venus: [10, 0, 6],
+    Earth: [14, 0, 10],
+    Mars: [18, 0, 13],
+    Jupiter: [24, 0, 18],
+    Saturn: [30, 0, 22],
   };
 
   const handlePlanetClick = (planet) => {
     setShowSurfaceView(true);
 
-    // Set surface image and content based on the selected planet
     switch (planet) {
       case 'Mercury':
         setSurfaceImage('models/mercury_surface.jpg');
@@ -268,7 +268,7 @@ function App() {
 
       <Canvas
         style={{ height: '100vh', width: '100vw', background: '#0a0a0a' }}
-        camera={{ position: [0, 15, 25], fov: 75 }}
+        camera={{ position: [0, 35, 45], fov: 75 }} // Optimized camera position and wider fov for compact view
         shadows
       >
         <CameraController selectedPlanet={selectedPlanet} planetPositions={planetPositions} />
@@ -284,92 +284,92 @@ function App() {
           {/* Planets */}
           {(selectedPlanet === null || selectedPlanet === "Mercury") && (
             <Planet 
-            modelPath="models/Mercury_1_4878.glb" 
-            orbitRadiusX={12} 
-            orbitRadiusZ={8} 
-            speed={0.1} 
-            scale={0.003} 
-            rotationSpeed={0.002} 
-            selected={selectedPlanet === "Mercury"}
-            onClick={() => handlePlanetClick("Mercury")}
-            name="Mercury"
-          />
+              modelPath="models/Mercury_1_4878.glb" 
+              orbitRadiusX={6} 
+              orbitRadiusZ={3} 
+              speed={0.1} 
+              scale={0.003} 
+              rotationSpeed={0.002} 
+              selected={selectedPlanet === "Mercury"}
+              onClick={() => handlePlanetClick("Mercury")}
+              name="Mercury"
+            />
           )}
           {(selectedPlanet === null || selectedPlanet === "Venus") && (
             <Planet 
-            modelPath="models/Venus_1_12103.glb" 
-            orbitRadiusX={18} 
-            orbitRadiusZ={14} 
-            speed={0.08} 
-            scale={0.004} 
-            rotationSpeed={0.0015} 
-            selected={selectedPlanet === "Venus"}
-            onClick={() => handlePlanetClick("Venus")}
-            name="Venus"
-          />
+              modelPath="models/Venus_1_12103.glb" 
+              orbitRadiusX={10} 
+              orbitRadiusZ={6} 
+              speed={0.08} 
+              scale={0.004} 
+              rotationSpeed={0.0015} 
+              selected={selectedPlanet === "Venus"}
+              onClick={() => handlePlanetClick("Venus")}
+              name="Venus"
+            />
           )}
           {(selectedPlanet === null || selectedPlanet === "Earth") && (
             <Planet 
-            modelPath="models/Earth_1_12756.glb" 
-            orbitRadiusX={24} 
-            orbitRadiusZ={20} 
-            speed={0.06} 
-            scale={0.004} 
-            rotationSpeed={0.0012} 
-            selected={selectedPlanet === "Earth"}
-            onClick={() => handlePlanetClick("Earth")}
-            name="Earth"
-          />
+              modelPath="models/Earth_1_12756.glb" 
+              orbitRadiusX={14} 
+              orbitRadiusZ={10} 
+              speed={0.06} 
+              scale={0.004} 
+              rotationSpeed={0.0012} 
+              selected={selectedPlanet === "Earth"}
+              onClick={() => handlePlanetClick("Earth")}
+              name="Earth"
+            />
           )}
           {(selectedPlanet === null || selectedPlanet === "Mars") && (
             <Planet 
-            modelPath="models/24881_Mars_1_6792.glb" 
-            orbitRadiusX={30} 
-            orbitRadiusZ={26} 
-            speed={0.05} 
-            scale={0.0035} 
-            rotationSpeed={0.001} 
-            selected={selectedPlanet === "Mars"}
-            onClick={() => handlePlanetClick("Mars")}
-            name="Mars"
-          />
+              modelPath="models/24881_Mars_1_6792.glb" 
+              orbitRadiusX={18} 
+              orbitRadiusZ={13} 
+              speed={0.05} 
+              scale={0.0035} 
+              rotationSpeed={0.001} 
+              selected={selectedPlanet === "Mars"}
+              onClick={() => handlePlanetClick("Mars")}
+              name="Mars"
+            />
           )}
           {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
             <Planet 
-            modelPath="models/Jupiter_1_142984.glb" 
-            orbitRadiusX={38} 
-            orbitRadiusZ={32} 
-            speed={0.04} 
-            scale={0.008} 
-            rotationSpeed={0.0008} 
-            selected={selectedPlanet === "Jupiter"}
-            onClick={() => handlePlanetClick("Jupiter")}
-            name="Jupiter"
-          />
+              modelPath="models/Jupiter_1_142984.glb" 
+              orbitRadiusX={24} 
+              orbitRadiusZ={18} 
+              speed={0.04} 
+              scale={0.008} 
+              rotationSpeed={0.0008} 
+              selected={selectedPlanet === "Jupiter"}
+              onClick={() => handlePlanetClick("Jupiter")}
+              name="Jupiter"
+            />
           )}
           {(selectedPlanet === null || selectedPlanet === "Saturn") && (
             <Planet 
-            modelPath="models/Saturn_1_120536.glb" 
-            orbitRadiusX={46} 
-            orbitRadiusZ={40} 
-            speed={0.03} 
-            scale={0.007} 
-            rotationSpeed={0.0006} 
-            selected={selectedPlanet === "Saturn"}
-            onClick={() => handlePlanetClick("Saturn")}
-            name="Saturn"
-          />
+              modelPath="models/Saturn_1_120536.glb" 
+              orbitRadiusX={30} 
+              orbitRadiusZ={22} 
+              speed={0.03} 
+              scale={0.007} 
+              rotationSpeed={0.0006} 
+              selected={selectedPlanet === "Saturn"}
+              onClick={() => handlePlanetClick("Saturn")}
+              name="Saturn"
+            />
           )}
         </Suspense>
 
         {selectedPlanet === null && (
           <>
-            <EllipticalOrbitPath radiusX={12} radiusZ={8} color="#A6E22E" lineWidth={2} />
-            <EllipticalOrbitPath radiusX={18} radiusZ={14} color="#F92672" lineWidth={2} />
-            <EllipticalOrbitPath radiusX={24} radiusZ={20} color="#66D9EF" lineWidth={2} />
-            <EllipticalOrbitPath radiusX={30} radiusZ={26} color="#FFA500" lineWidth={2} />
-            <EllipticalOrbitPath radiusX={38} radiusZ={32} color="#FF4500" lineWidth={2} />
-            <EllipticalOrbitPath radiusX={46} radiusZ={40} color="#FFD700" lineWidth={2} />
+            <EllipticalOrbitPath radiusX={6} radiusZ={3} color="#A6E22E" lineWidth={2} />
+            <EllipticalOrbitPath radiusX={10} radiusZ={6} color="#F92672" lineWidth={2} />
+            <EllipticalOrbitPath radiusX={14} radiusZ={10} color="#66D9EF" lineWidth={2} />
+            <EllipticalOrbitPath radiusX={18} radiusZ={13} color="#FFA500" lineWidth={2} />
+            <EllipticalOrbitPath radiusX={24} radiusZ={18} color="#FF4500" lineWidth={2} />
+            <EllipticalOrbitPath radiusX={30} radiusZ={22} color="#FFD700" lineWidth={2} />
           </>
         )}
 
