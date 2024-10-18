@@ -230,11 +230,6 @@ function NebulaBackground() {
   );
 }
 
-// Surface Overlay Component
-
-
-
-
 
 
 function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
@@ -243,14 +238,12 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
 
   useEffect(() => {
     if (showSurfaceView) {
-      // Entry animation for the overlay
       gsap.fromTo(
         overlayRef.current,
         { autoAlpha: 0, scale: 0.8 },
         { autoAlpha: 1, scale: 1, duration: 0.6, ease: "power3.out" }
       );
 
-      // Content animation (subtle slide in)
       gsap.fromTo(
         contentRef.current,
         { opacity: 0, y: 50 },
@@ -270,13 +263,12 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
       <button 
         className="close-button" 
         onClick={() => {
-          // Exit animation before closing
           gsap.to(overlayRef.current, {
             autoAlpha: 0,
             scale: 0.8,
             duration: 0.5,
             ease: "power3.in",
-            onComplete: onClose // Only call onClose after animation completes
+            onComplete: onClose
           });
         }}>
         Close
@@ -284,6 +276,7 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
     </div>
   );
 }
+
 
 
 // Controls Component
@@ -324,28 +317,31 @@ function App() {
 
     switch (planet) {
       case 'Mercury':
-        setSurfaceImage('models/mercury_surface.jpg');
-        setSurfaceContent(
-          <div>
-            <h1 style={{ 
-              color: '#D3D3D3',  // Light gray/silver color for the header
-              textShadow: '0 0 10px #BEBEBE', // Soft silver glow
-              fontSize: '2rem',
-            }}>
-              Professional Summary
-            </h1>
-            <p style={{ 
-              color: '#A9A9A9', // Darker cool gray for the body text
-              fontSize: '1.2rem',
-              lineHeight: '1.6',
-              maxWidth: '80%', // Keeps text within readable bounds
-              textAlign: 'justify',  // Improves text readability
-              margin: '20px auto'  // Adds spacing between the header and the body text
-            }}>
-              A highly adaptable Full Stack Developer with over 2 years of experience, embodying resilience in the face of complex challenges. Just as Mercury endures extreme environments, I thrive in fast-paced, high-pressure environments, delivering scalable solutions using Java (v8+), Spring Boot, and AngularJS. Whether it’s optimizing APIs or enhancing system security, I consistently find innovative ways to tackle problems. My expertise spans AWS cloud solutions, CI/CD pipelines, and database management, allowing me to create robust software that withstands the toughest demands, much like Mercury's ability to survive the extremes of space.
-            </p>
-          </div>
-        );
+      setSurfaceImage('models/mercury_surface.jpg');
+      setSurfaceContent(
+        <div>
+          <h1 style={{ 
+            color: '#ECECEC',  // Light silver, closer to Mercury’s surface tone
+            textShadow: '0 0 15px rgba(236, 236, 236, 0.6)', // Subtle silver glow
+            fontSize: '2.2rem',
+            fontWeight: 'bold',
+            letterSpacing: '1.2px'
+          }}>
+            Professional Summary
+          </h1>
+          <p style={{ 
+            color: '#B0B0B0', // Soft gray for readable contrast
+            fontSize: '1.1rem',
+            lineHeight: '1.7',
+            maxWidth: '85%', // Slightly wider for better use of space
+            textAlign: 'justify',
+            margin: '20px auto',
+            padding: '0 20px',  // Adds subtle padding for better structure
+          }}>
+            A highly adaptable Full Stack Developer with over 2 years of experience, embodying resilience in the face of complex challenges. Just as Mercury endures extreme environments, I thrive in fast-paced, high-pressure environments, delivering scalable solutions using Java (v8+), Spring Boot, and AngularJS. Whether it’s optimizing APIs or enhancing system security, I consistently find innovative ways to tackle problems. My expertise spans AWS cloud solutions, CI/CD pipelines, and database management, allowing me to create robust software that withstands the toughest demands, much like Mercury's ability to survive the extremes of space.
+          </p>
+        </div>
+      );
         break;
       case 'Venus':
         setSurfaceImage('models/venus_surface.jpg');
