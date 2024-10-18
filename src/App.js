@@ -6,6 +6,72 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import './App.css';
 
+function MercurySurface() {
+  return (
+    <>
+      <pointLight position={[-5, 2, 5]} intensity={1} color="#FF4500" />
+      <pointLight position={[5, 2, 5]} intensity={1} color="#00BFFF" />
+      
+      {/* Sunlit Side (Hot Zone) */}
+      <Text
+        position={[-3, 1.5, 0]} 
+        fontSize={1.1}
+        color="#FF4500"
+        emissive="#FF4500"
+        emissiveIntensity={1.2}
+        outlineWidth={0.05}
+        outlineColor="#000000"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Resilience
+      </Text>
+      <Text
+        position={[-3, 0, 0]} 
+        fontSize={0.8}
+        color="#FF6347"
+        emissive="#FF6347"
+        emissiveIntensity={1.0}
+        outlineWidth={0.05}
+        outlineColor="#000000"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Overcoming Challenges
+      </Text>
+
+      {/* Dark Side (Cold Zone) */}
+      <Text
+        position={[3, 1.5, 0]} 
+        fontSize={1.1}
+        color="#00BFFF"
+        emissive="#00BFFF"
+        emissiveIntensity={1.2}
+        outlineWidth={0.05}
+        outlineColor="#000000"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Adaptability
+      </Text>
+      <Text
+        position={[3, 0, 0]} 
+        fontSize={0.8}
+        color="#87CEFA"
+        emissive="#87CEFA"
+        emissiveIntensity={1.0}
+        outlineWidth={0.05}
+        outlineColor="#000000"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Versatility
+      </Text>
+    </>
+  );
+}
+
+
 // Component to create an orbit path
 function EllipticalOrbitPath({ radiusX, radiusZ, color, lineWidth }) {
   const points = [];
@@ -88,6 +154,9 @@ function CameraController({ selectedPlanet, planetPositions }) {
 // Generic Planet Component with improved labels that follow the planet
 // Generic Planet Component with labels that follow the planet
 // Generic Planet Component with labels that follow the planet
+
+
+
 function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, selected, onClick, name }) {
   const ref = useRef();
   const labelRef = useRef();
@@ -105,7 +174,7 @@ function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationS
 
       // Position the label for visibility above the planet
       if (labelRef.current) {
-        const labelY = name === "Jupiter" ? 4.5 : name === "Saturn" ? 5 : 2.5; // Adjusted y position
+        const labelY = name === "Certifications" ? 4.5 : name === "Education" ? 5 : 2.5; // Adjusted y position
         labelRef.current.position.set(x, labelY, z);
       }
     } else {
@@ -122,12 +191,12 @@ function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationS
       {!selected && (
         <Text 
           ref={labelRef} 
-          fontSize={name === "Jupiter" ? 1.0 : name === "Saturn" ? 0.9 : 0.6} 
-          color="#FFFFFF" 
+          fontSize={1.1} // Increased font size for better visibility
+          color="#00BFFF" // Changed to a gold/yellow color
           anchorX="center" 
           anchorY="middle"
-          outlineWidth={0.03} // Optional: Add an outline to improve readability
-          outlineColor="#000000"
+          outlineWidth={0.05} 
+          outlineColor="#000000" // Black outline for contrast
         >
           {name}
         </Text>
@@ -135,6 +204,8 @@ function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationS
     </>
   );
 }
+
+
 
 // ... the rest of the App component remains the same
 
@@ -160,19 +231,60 @@ function NebulaBackground() {
 }
 
 // Surface Overlay Component
+
+
+
+
+
+
 function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
+  const overlayRef = useRef();
+  const contentRef = useRef();
+
+  useEffect(() => {
+    if (showSurfaceView) {
+      // Entry animation for the overlay
+      gsap.fromTo(
+        overlayRef.current,
+        { autoAlpha: 0, scale: 0.8 },
+        { autoAlpha: 1, scale: 1, duration: 0.6, ease: "power3.out" }
+      );
+
+      // Content animation (subtle slide in)
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: "power3.out" }
+      );
+    }
+  }, [showSurfaceView]);
+
   if (!showSurfaceView) return null;
 
   return (
-    <div className="surface-overlay">
+    <div className="surface-overlay" ref={overlayRef}>
       <img src={imagePath} alt="Planet Surface" className="surface-image" />
-      <div className="overlay-content">
+      <div className="overlay-content" ref={contentRef}>
         {content}
       </div>
-      <button className="close-button" onClick={onClose}>Close</button>
+      <button 
+        className="close-button" 
+        onClick={() => {
+          // Exit animation before closing
+          gsap.to(overlayRef.current, {
+            autoAlpha: 0,
+            scale: 0.8,
+            duration: 0.5,
+            ease: "power3.in",
+            onComplete: onClose // Only call onClose after animation completes
+          });
+        }}>
+        Close
+      </button>
     </div>
   );
 }
+
 
 // Controls Component
 function Controls({ selectedPlanet, planetRef }) {
@@ -191,7 +303,6 @@ function Controls({ selectedPlanet, planetRef }) {
 
   return <OrbitControls ref={controlsRef} args={[camera, gl.domElement]} enableZoom enablePan={false} />;
 }
-
 function App() {
   const [selectedPlanet, setSelectedPlanet] = useState(null);
   const [showSurfaceView, setShowSurfaceView] = useState(false);
@@ -199,7 +310,6 @@ function App() {
   const [surfaceContent, setSurfaceContent] = useState(null);
   const planetRef = useRef();
 
-  // Reduced orbit distances for a compact view
   const planetPositions = {
     Mercury: [6, 0, 3],
     Venus: [10, 0, 6],
@@ -215,27 +325,47 @@ function App() {
     switch (planet) {
       case 'Mercury':
         setSurfaceImage('models/mercury_surface.jpg');
-        setSurfaceContent(<p>Mercury - Professional Summary</p>);
+        setSurfaceContent(
+          <div>
+            <h1 style={{ 
+              color: '#D3D3D3',  // Light gray/silver color for the header
+              textShadow: '0 0 10px #BEBEBE', // Soft silver glow
+              fontSize: '2rem',
+            }}>
+              Professional Summary
+            </h1>
+            <p style={{ 
+              color: '#A9A9A9', // Darker cool gray for the body text
+              fontSize: '1.2rem',
+              lineHeight: '1.6',
+              maxWidth: '80%', // Keeps text within readable bounds
+              textAlign: 'justify',  // Improves text readability
+              margin: '20px auto'  // Adds spacing between the header and the body text
+            }}>
+              A highly adaptable Full Stack Developer with over 2 years of experience, embodying resilience in the face of complex challenges. Just as Mercury endures extreme environments, I thrive in fast-paced, high-pressure environments, delivering scalable solutions using Java (v8+), Spring Boot, and AngularJS. Whether it’s optimizing APIs or enhancing system security, I consistently find innovative ways to tackle problems. My expertise spans AWS cloud solutions, CI/CD pipelines, and database management, allowing me to create robust software that withstands the toughest demands, much like Mercury's ability to survive the extremes of space.
+            </p>
+          </div>
+        );
         break;
       case 'Venus':
         setSurfaceImage('models/venus_surface.jpg');
-        setSurfaceContent(<p>Venus - Experience Overview</p>);
+        setSurfaceContent(<p>Experience Overview</p>);
         break;
       case 'Earth':
         setSurfaceImage('models/earth_surface.jpg');
-        setSurfaceContent(<p>Earth - Skill Set</p>);
+        setSurfaceContent(<p>Skills</p>);
         break;
       case 'Mars':
         setSurfaceImage('models/mars_surface.jpg');
-        setSurfaceContent(<p>Mars - Projects</p>);
+        setSurfaceContent(<p>Projects</p>);
         break;
       case 'Jupiter':
         setSurfaceImage('models/jupiter_surface.jpg');
-        setSurfaceContent(<p>Jupiter - Certifications</p>);
+        setSurfaceContent(<p>Certifications</p>);
         break;
       case 'Saturn':
         setSurfaceImage('models/saturn_surface.jpg');
-        setSurfaceContent(<p>Saturn - Education</p>);
+        setSurfaceContent(<p>Education</p>);
         break;
       default:
         break;
@@ -255,20 +385,20 @@ function App() {
           onChange={(e) => setSelectedPlanet(e.target.value)}
           defaultValue=""
         >
-          <option value="" disabled>Select a planet</option>
-          <option value="Mercury">Mercury</option>
-          <option value="Venus">Venus</option>
-          <option value="Earth">Earth</option>
-          <option value="Mars">Mars</option>
-          <option value="Jupiter">Jupiter</option>
-          <option value="Saturn">Saturn</option>
+          <option value="" disabled>Select a section</option>
+          <option value="Mercury">Professional Summary</option>
+          <option value="Venus">Experience Overview</option>
+          <option value="Earth">Skills</option>
+          <option value="Mars">Projects</option>
+          <option value="Jupiter">Certifications</option>
+          <option value="Saturn">Education</option>
         </select>
         <button onClick={() => setSelectedPlanet(null)}>Reset View</button>
       </div>
 
       <Canvas
         style={{ height: '100vh', width: '100vw', background: '#0a0a0a' }}
-        camera={{ position: [0, 35, 45], fov: 75 }} // Optimized camera position and wider fov for compact view
+        camera={{ position: [0, 35, 45], fov: 75 }}
         shadows
       >
         <CameraController selectedPlanet={selectedPlanet} planetPositions={planetPositions} />
@@ -280,87 +410,88 @@ function App() {
         <MovingStars />
 
         <Suspense fallback={null}>
-          {selectedPlanet === null && <Sun />}
-          {/* Planets */}
-          {(selectedPlanet === null || selectedPlanet === "Mercury") && (
-            <Planet 
-              modelPath="models/Mercury_1_4878.glb" 
-              orbitRadiusX={6} 
-              orbitRadiusZ={3} 
-              speed={0.1} 
-              scale={0.003} 
-              rotationSpeed={0.002} 
-              selected={selectedPlanet === "Mercury"}
-              onClick={() => handlePlanetClick("Mercury")}
-              name="Mercury"
-            />
-          )}
-          {(selectedPlanet === null || selectedPlanet === "Venus") && (
-            <Planet 
-              modelPath="models/Venus_1_12103.glb" 
-              orbitRadiusX={10} 
-              orbitRadiusZ={6} 
-              speed={0.08} 
-              scale={0.004} 
-              rotationSpeed={0.0015} 
-              selected={selectedPlanet === "Venus"}
-              onClick={() => handlePlanetClick("Venus")}
-              name="Venus"
-            />
-          )}
-          {(selectedPlanet === null || selectedPlanet === "Earth") && (
-            <Planet 
-              modelPath="models/Earth_1_12756.glb" 
-              orbitRadiusX={14} 
-              orbitRadiusZ={10} 
-              speed={0.06} 
-              scale={0.004} 
-              rotationSpeed={0.0012} 
-              selected={selectedPlanet === "Earth"}
-              onClick={() => handlePlanetClick("Earth")}
-              name="Earth"
-            />
-          )}
-          {(selectedPlanet === null || selectedPlanet === "Mars") && (
-            <Planet 
-              modelPath="models/24881_Mars_1_6792.glb" 
-              orbitRadiusX={18} 
-              orbitRadiusZ={13} 
-              speed={0.05} 
-              scale={0.0035} 
-              rotationSpeed={0.001} 
-              selected={selectedPlanet === "Mars"}
-              onClick={() => handlePlanetClick("Mars")}
-              name="Mars"
-            />
-          )}
-          {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
-            <Planet 
-              modelPath="models/Jupiter_1_142984.glb" 
-              orbitRadiusX={24} 
-              orbitRadiusZ={18} 
-              speed={0.04} 
-              scale={0.008} 
-              rotationSpeed={0.0008} 
-              selected={selectedPlanet === "Jupiter"}
-              onClick={() => handlePlanetClick("Jupiter")}
-              name="Jupiter"
-            />
-          )}
-          {(selectedPlanet === null || selectedPlanet === "Saturn") && (
-            <Planet 
-              modelPath="models/Saturn_1_120536.glb" 
-              orbitRadiusX={30} 
-              orbitRadiusZ={22} 
-              speed={0.03} 
-              scale={0.007} 
-              rotationSpeed={0.0006} 
-              selected={selectedPlanet === "Saturn"}
-              onClick={() => handlePlanetClick("Saturn")}
-              name="Saturn"
-            />
-          )}
-        </Suspense>
+  {selectedPlanet === null && <Sun />}
+  
+  {(selectedPlanet === null || selectedPlanet === "Mercury") && (
+    <Planet 
+      modelPath="models/Mercury_1_4878.glb" 
+      orbitRadiusX={6} 
+      orbitRadiusZ={3} 
+      speed={4.15 / 10}  // Slowed down by dividing by 10
+      scale={0.003} 
+      rotationSpeed={0.002} 
+      selected={selectedPlanet === "Mercury"}
+      onClick={() => handlePlanetClick("Mercury")}
+      name="Summary"
+    />
+  )}
+  {(selectedPlanet === null || selectedPlanet === "Venus") && (
+    <Planet 
+      modelPath="models/Venus_1_12103.glb" 
+      orbitRadiusX={10} 
+      orbitRadiusZ={6} 
+      speed={1.62 / 10}  // Slowed down by dividing by 10
+      scale={0.004} 
+      rotationSpeed={0.0015} 
+      selected={selectedPlanet === "Venus"}
+      onClick={() => handlePlanetClick("Venus")}
+      name="Experience"
+    />
+  )}
+  {(selectedPlanet === null || selectedPlanet === "Earth") && (
+    <Planet 
+      modelPath="models/Earth_1_12756.glb" 
+      orbitRadiusX={14} 
+      orbitRadiusZ={10} 
+      speed={1.0 / 10}  // Slowed down by dividing by 10
+      scale={0.004} 
+      rotationSpeed={0.0012} 
+      selected={selectedPlanet === "Earth"}
+      onClick={() => handlePlanetClick("Earth")}
+      name="Skills"
+    />
+  )}
+  {(selectedPlanet === null || selectedPlanet === "Mars") && (
+    <Planet 
+      modelPath="models/24881_Mars_1_6792.glb" 
+      orbitRadiusX={18} 
+      orbitRadiusZ={13} 
+      speed={0.53 / 10}  // Slowed down by dividing by 10
+      scale={0.0035} 
+      rotationSpeed={0.001} 
+      selected={selectedPlanet === "Mars"}
+      onClick={() => handlePlanetClick("Mars")}
+      name="Projects"
+    />
+  )}
+  {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
+    <Planet 
+      modelPath="models/Jupiter_1_142984.glb" 
+      orbitRadiusX={24} 
+      orbitRadiusZ={18} 
+      speed={0.084 / 10}  // Slowed down by dividing by 10
+      scale={0.008} 
+      rotationSpeed={0.0008} 
+      selected={selectedPlanet === "Jupiter"}
+      onClick={() => handlePlanetClick("Jupiter")}
+      name="Certifications"
+    />
+  )}
+  {(selectedPlanet === null || selectedPlanet === "Saturn") && (
+    <Planet 
+      modelPath="models/Saturn_1_120536.glb" 
+      orbitRadiusX={30} 
+      orbitRadiusZ={22} 
+      speed={0.034 / 10}  // Slowed down by dividing by 10
+      scale={0.007} 
+      rotationSpeed={0.0006} 
+      selected={selectedPlanet === "Saturn"}
+      onClick={() => handlePlanetClick("Saturn")}
+      name="Education"
+    />
+  )}
+</Suspense>
+
 
         {selectedPlanet === null && (
           <>
