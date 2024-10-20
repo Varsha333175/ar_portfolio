@@ -232,9 +232,8 @@ function NebulaBackground() {
 
 
 
-function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
+function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content, customClass }) {
   const overlayRef = useRef();
-  const contentRef = useRef();
 
   useEffect(() => {
     if (showSurfaceView) {
@@ -243,34 +242,29 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content }) {
         { autoAlpha: 0, scale: 0.8 },
         { autoAlpha: 1, scale: 1, duration: 0.6, ease: "power3.out" }
       );
-
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: "power3.out" }
-      );
     }
   }, [showSurfaceView]);
 
   if (!showSurfaceView) return null;
 
+  const handleClose = () => {
+    gsap.to(overlayRef.current, {
+      autoAlpha: 0,
+      scale: 0.8,
+      duration: 0.5,
+      ease: "power3.in",
+    });
+    onClose(); // Close the overlay
+  };
+
   return (
-    <div className="surface-overlay" ref={overlayRef}>
+    <div className={`surface-overlay ${customClass}`} ref={overlayRef}>
       <img src={imagePath} alt="Planet Surface" className="surface-image" />
-      <div className="overlay-content" ref={contentRef}>
-        {content}
-      </div>
+      {content}
       <button 
         className="close-button" 
-        onClick={() => {
-          gsap.to(overlayRef.current, {
-            autoAlpha: 0,
-            scale: 0.8,
-            duration: 0.5,
-            ease: "power3.in",
-            onComplete: onClose
-          });
-        }}>
+        onClick={handleClose}  // Call the close function
+      >
         Close
       </button>
     </div>
@@ -301,6 +295,7 @@ function App() {
   const [showSurfaceView, setShowSurfaceView] = useState(false);
   const [surfaceImage, setSurfaceImage] = useState('');
   const [surfaceContent, setSurfaceContent] = useState(null);
+  const [customClass, setCustomClass] = useState('');  // New state to handle custom styles
   const planetRef = useRef();
 
   const planetPositions = {
@@ -317,51 +312,64 @@ function App() {
 
     switch (planet) {
       case 'Mercury':
-      setSurfaceImage('models/mercury_surface.jpg');
-      setSurfaceContent(
-        <div>
-          <h1 style={{ 
-            color: '#ECECEC',  // Light silver, closer to Mercury’s surface tone
-            textShadow: '0 0 15px rgba(236, 236, 236, 0.6)', // Subtle silver glow
-            fontSize: '2.2rem',
-            fontWeight: 'bold',
-            letterSpacing: '1.2px'
-          }}>
-            Professional Summary
-          </h1>
-          <p style={{ 
-            color: '#B0B0B0', // Soft gray for readable contrast
-            fontSize: '1.1rem',
-            lineHeight: '1.7',
-            maxWidth: '85%', // Slightly wider for better use of space
-            textAlign: 'justify',
-            margin: '20px auto',
-            padding: '0 20px',  // Adds subtle padding for better structure
-          }}>
-            A highly adaptable Full Stack Developer with over 2 years of experience, embodying resilience in the face of complex challenges. Just as Mercury endures extreme environments, I thrive in fast-paced, high-pressure environments, delivering scalable solutions using Java (v8+), Spring Boot, and AngularJS. Whether it’s optimizing APIs or enhancing system security, I consistently find innovative ways to tackle problems. My expertise spans AWS cloud solutions, CI/CD pipelines, and database management, allowing me to create robust software that withstands the toughest demands, much like Mercury's ability to survive the extremes of space.
-          </p>
-        </div>
-      );
+        setSurfaceImage('models/mercury_surface.jpg');
+        setSurfaceContent(
+          <div>
+            <h1>Professional Summary</h1>
+            <p>Mercury-specific content here.</p>
+          </div>
+        );
+        setCustomClass('mercury-overlay');  // Apply Mercury-specific class
         break;
       case 'Venus':
         setSurfaceImage('models/venus_surface.jpg');
-        setSurfaceContent(<p>Experience Overview</p>);
+        setSurfaceContent(
+          <div>
+            <h1>Experience Overview</h1>
+            <p>Venus-specific content here.</p>
+          </div>
+        );
+        setCustomClass('venus-overlay');  // Apply Venus-specific class
         break;
       case 'Earth':
         setSurfaceImage('models/earth_surface.jpg');
-        setSurfaceContent(<p>Skills</p>);
+        setSurfaceContent(
+          <div>
+            <h1>Skills</h1>
+            <p>Earth-specific content here.</p>
+          </div>
+        );
+        setCustomClass('earth-overlay');  // Apply Earth-specific class
         break;
       case 'Mars':
         setSurfaceImage('models/mars_surface.jpg');
-        setSurfaceContent(<p>Projects</p>);
+        setSurfaceContent(
+          <div>
+            <h1>Projects</h1>
+            <p>Mars-specific content here.</p>
+          </div>
+        );
+        setCustomClass('mars-overlay');  // Apply Mars-specific class
         break;
       case 'Jupiter':
         setSurfaceImage('models/jupiter_surface.jpg');
-        setSurfaceContent(<p>Certifications</p>);
+        setSurfaceContent(
+          <div>
+            <h1>Certifications</h1>
+            <p>Jupiter-specific content here.</p>
+          </div>
+        );
+        setCustomClass('jupiter-overlay');  // Apply Jupiter-specific class
         break;
       case 'Saturn':
         setSurfaceImage('models/saturn_surface.jpg');
-        setSurfaceContent(<p>Education</p>);
+        setSurfaceContent(
+          <div>
+            <h1>Education</h1>
+            <p>Saturn-specific content here.</p>
+          </div>
+        );
+        setCustomClass('saturn-overlay');  // Apply Saturn-specific class
         break;
       default:
         break;
@@ -370,8 +378,9 @@ function App() {
 
   const handleCloseSurfaceView = () => {
     setShowSurfaceView(false);
+    setCustomClass('');  // Reset custom class when the overlay is closed
   };
-
+  
   return (
     <div className="app">
       <div className="dropdown">
@@ -506,8 +515,14 @@ function App() {
         <Controls selectedPlanet={selectedPlanet} planetRef={planetRef} />
       </Canvas>
 
-      <SurfaceOverlay showSurfaceView={showSurfaceView} onClose={handleCloseSurfaceView} imagePath={surfaceImage} content={surfaceContent} />
-    </div>
+      <SurfaceOverlay 
+        showSurfaceView={showSurfaceView} 
+        onClose={handleCloseSurfaceView} 
+        imagePath={surfaceImage} 
+        content={surfaceContent} 
+        customClass={customClass}  // Pass planet-specific class here
+      />
+        </div>
   );
 }
 
