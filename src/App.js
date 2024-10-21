@@ -269,9 +269,38 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content, customCl
     </div>
   );
 }
+
+
 function EarthSurface() {
+  const videoRef = useRef(null);
+  const [isFullScreen, setIsFullScreen] = useState(true);
+
+  // Scroll event handler for resizing the video
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY;
+    if (scrollPosition > 100) {
+      setIsFullScreen(false); // Shrink video
+    } else {
+      setIsFullScreen(true); // Fullscreen video
+    }
+  };
+
+  // Effect to listen for scroll events
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="earth-surface">
+    <div className={`earth-surface ${isFullScreen ? 'full-screen-video' : 'small-video'}`}>
+      <video
+        ref={videoRef}
+        src="models/213026.mp4"
+        autoPlay
+        muted
+        loop
+        className="earth-video"
+      />
       <div className="card-grid">
         {Array.from({ length: 11 }).map((_, index) => (
           <div className="flip-card" key={index}>
@@ -286,12 +315,9 @@ function EarthSurface() {
           </div>
         ))}
       </div>
-      
-      
     </div>
   );
 }
-
 
 
 
@@ -355,9 +381,9 @@ function App() {
         setCustomClass('venus-overlay');  // Apply Venus-specific class
         break;
         case 'Earth':
-        setSurfaceImage('models/earth_surface.jpg');
-        setSurfaceContent(<EarthSurface />); // Use the EarthSurface component here
-        setCustomClass('earth-overlay');
+      setSurfaceContent(<EarthSurface />); // Render EarthSurface with scroll-responsive video
+      setCustomClass('earth-overlay');  // Apply Earth-specific class
+      break;
         break;
         case 'Mars':
         setSurfaceImage('models/mars_surface.jpg');
