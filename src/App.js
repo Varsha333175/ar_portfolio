@@ -231,7 +231,6 @@ function NebulaBackground() {
 }
 
 
-
 function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content, customClass }) {
   const overlayRef = useRef();
 
@@ -258,18 +257,42 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content, customCl
   };
 
   return (
-    <div className={`surface-overlay ${customClass}`} ref={overlayRef}>
-      <img src={imagePath} alt="Planet Surface" className="surface-image" />
+    <div
+      className={`surface-overlay ${customClass}`}
+      ref={overlayRef}
+      style={{ backgroundImage: `url(${imagePath})` }} // Set background image here
+    >
       {content}
-      <button 
-        className="close-button" 
-        onClick={handleClose}  // Call the close function
-      >
+      <button className="close-button" onClick={handleClose}>
         Close
       </button>
     </div>
   );
 }
+function EarthSurface() {
+  return (
+    <div className="earth-surface">
+      <div className="card-grid">
+        {Array.from({ length: 11 }).map((_, index) => (
+          <div className="flip-card" key={index}>
+            <div className="flip-card-inner">
+              <div className="flip-card-front">
+                Card {index + 1}
+              </div>
+              <div className="flip-card-back">
+                Back {index + 1}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      
+    </div>
+  );
+}
+
+
 
 
 
@@ -331,17 +354,12 @@ function App() {
         );
         setCustomClass('venus-overlay');  // Apply Venus-specific class
         break;
-      case 'Earth':
+        case 'Earth':
         setSurfaceImage('models/earth_surface.jpg');
-        setSurfaceContent(
-          <div>
-            <h1>Skills</h1>
-            <p>Earth-specific content here.</p>
-          </div>
-        );
-        setCustomClass('earth-overlay');  // Apply Earth-specific class
+        setSurfaceContent(<EarthSurface />); // Use the EarthSurface component here
+        setCustomClass('earth-overlay');
         break;
-      case 'Mars':
+        case 'Mars':
         setSurfaceImage('models/mars_surface.jpg');
         setSurfaceContent(
           <div>
