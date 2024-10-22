@@ -270,26 +270,71 @@ function SurfaceOverlay({ showSurfaceView, onClose, imagePath, content, customCl
   );
 }
 
-
 function EarthSurface() {
   const videoRef = useRef(null);
   const [isFullScreen, setIsFullScreen] = useState(true);
 
-  // Scroll event handler for resizing the video
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
     if (scrollPosition > 100) {
-      setIsFullScreen(false); // Shrink video
+      setIsFullScreen(false);
     } else {
-      setIsFullScreen(true); // Fullscreen video
+      setIsFullScreen(true);
     }
   };
 
-  // Effect to listen for scroll events
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // The skills data (split each category into an array of skills)
+  const skills = [
+    {
+      title: 'Programming Languages',
+      content: ['Java', 'Java 8+', 'JavaScript', 'TypeScript', 'SQL', 'Python', 'Ruby', 'PHP', 'HTML5', 'CSS3']
+    },
+    {
+      title: 'Frameworks & Libraries',
+      content: ['Spring Boot', 'Spring Framework', 'Hibernate', 'JPA', 'Angular', 'ReactJS', 'Node.js', 'Express.js', 'Bootstrap', 'Sass']
+    },
+    {
+      title: 'Database Management',
+      content: ['MySQL', 'PostgreSQL', 'MongoDB', 'NoSQL', 'SQL Server', 'Database Design', 'Database Management', 'SQL Queries']
+    },
+    {
+      title: 'Web Development',
+      content: ['Full Stack Development', 'Frontend Development', 'Backend Development', 'RESTful APIs', 'API Development', 'Microservices', 'JSON', 'XML']
+    },
+    {
+      title: 'Cloud & DevOps',
+      content: ['AWS', 'AWS Lambda', 'AWS S3', 'Docker', 'Kubernetes', 'GCP', 'Azure', 'Jenkins', 'CI/CD', 'Cloud Computing']
+    },
+    {
+      title: 'Version Control & Build Tools',
+      content: ['Git', 'Maven', 'Gradle', 'Version Control', 'GitHub']
+    },
+    {
+      title: 'Software Development & Architecture',
+      content: ['OOP', 'Design Patterns', 'Microservices Architecture', 'Software Engineering', 'System Architecture', 'SDLC']
+    },
+    {
+      title: 'Testing & Security',
+      content: ['TDD', 'BDD', 'Unit Testing', 'JUnit', 'Selenium', 'API Security', 'JWT', 'OAuth2', 'Role-Based Access Control', 'IT Security']
+    },
+    {
+      title: 'Project Management & Methodologies',
+      content: ['Agile', 'Scrum', 'Project Management', 'Task Management', 'DevOps', 'Team Collaboration', 'Agile Methodologies']
+    },
+    {
+      title: 'Other Technical Skills',
+      content: ['Performance Tuning', 'Automation Testing', 'Cross-browser Compatibility', 'Responsive Design', 'Swagger', 'AWS Certified Solutions Architect']
+    },
+    {
+      title: 'Soft Skills',
+      content: ['Problem Solving', 'Communication Skills', 'Teamwork', 'Time Management', 'Adaptability', 'Leadership']
+    }
+  ];
 
   return (
     <div className={`earth-surface ${isFullScreen ? 'full-screen-video' : 'small-video'}`}>
@@ -301,26 +346,77 @@ function EarthSurface() {
         loop
         className="earth-video"
       />
-      <div className="card-grid">
-        {Array.from({ length: 11 }).map((_, index) => (
-          <div className="flip-card" key={index}>
-            <div className="flip-card-inner">
-              <div className="flip-card-front">
-                Card {index + 1}
-              </div>
-              <div className="flip-card-back">
-                Back {index + 1}
-              </div>
-            </div>
-          </div>
+      <div className="accordion-container">
+        {skills.map((skill, index) => (
+          <AccordionCard key={index} title={skill.title} content={skill.content} />
         ))}
       </div>
     </div>
   );
 }
+function AccordionCard({ title, content }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleAccordion = () => setIsOpen(!isOpen);
+
+  return (
+    <div className="accordion-card">
+      <div className="accordion-header" onClick={toggleAccordion}>
+        {title}
+      </div>
+      {isOpen && (
+        <div className="accordion-content">
+          {content.map((skill, index) => (
+            <div key={index} className="accordion-skill">{skill}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 
+function ChatBot() {
+  const [messages, setMessages] = useState([
+    { type: 'bot', text: 'Hello! How can I help you today?' },
+  ]);
+  const [inputValue, setInputValue] = useState('');
 
+  const handleSendMessage = () => {
+    if (inputValue.trim() !== '') {
+      const newMessages = [
+        ...messages,
+        { type: 'user', text: inputValue },
+        { type: 'bot', text: 'This is a bot response!' }, // Add bot response logic here
+      ];
+      setMessages(newMessages);
+      setInputValue('');
+    }
+  };
+
+  return (
+    <div className="chatbot-container">
+      <div className="chatbot-header">Chat with me!</div>
+      <div className="chatbot-messages">
+        {messages.map((msg, index) => (
+          <div key={index} className={`chatbot-message ${msg.type}`}>
+            {msg.text}
+          </div>
+        ))}
+      </div>
+      <div className="chatbot-input-container">
+        <input
+          type="text"
+          placeholder="Type a message..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+        />
+        <button onClick={handleSendMessage}>Send</button>
+      </div>
+    </div>
+  );
+}
 
 // Controls Component
 function Controls({ selectedPlanet, planetRef }) {
