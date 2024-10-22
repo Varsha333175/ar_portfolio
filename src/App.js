@@ -5,7 +5,8 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import './App.css';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBolt, faRocket } from '@fortawesome/free-solid-svg-icons';
 
 
 // Component to create an orbit path
@@ -353,15 +354,25 @@ function App() {
 
     switch (planet) {
       case 'Mercury':
-        setSurfaceImage('models/mercury_surface.jpg');
-        setSurfaceContent(
-          <div>
-            <h1>Professional Summary</h1>
-            <p>Mercury-specific content here.</p>
-          </div>
-        );
-        setCustomClass('mercury-overlay');  // Apply Mercury-specific class
-        break;
+  setSurfaceImage('models/mercury_surface.jpg');
+  setSurfaceContent(
+    <div>
+      <h1>
+        <FontAwesomeIcon icon={faBolt} size="2x" color="#00d2ff" /> Speed and Agility
+      </h1>
+      <p>
+        <FontAwesomeIcon icon={faRocket} size="2x" color="#ffab00" /> {/* Larger and more colorful rocket */}
+        Just like the swift planet Mercury, I excel in fast-paced environments where agility and efficiency are critical. 
+        My experience optimizing API performance—reducing response times by 20%—and delivering solutions under tight deadlines 
+        reflects my ability to move quickly without compromising quality. Whether it's architecting APIs or leading agile sprints, 
+        I'm always ready to solve complex problems with speed and precision.
+      </p>
+    </div>
+  );
+  setCustomClass('mercury-overlay');  // Apply Mercury-specific class
+  break;
+
+
       case 'Venus':
         setSurfaceImage('models/venus_surface.jpg');
         setSurfaceContent(

@@ -400,3 +400,113 @@ button:hover {
 .accordion-skill:hover {
   color: #ffd700; /* Accent color for skills hover */
 }
+
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Roboto:wght@400&display=swap');
+
+/* Mercury-specific styles */
+.mercury-overlay {
+  
+  background-size: cover;
+  filter: brightness(1.1); /* Brighten the background slightly */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+}
+
+.mercury-overlay h1 {
+  font-size: 3rem; /* Large title */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5); /* Neon blue gradient */
+  -webkit-background-clip: text;
+  color: transparent; /* Gradient text effect */
+}
+
+.mercury-overlay h1 i {
+  margin-right: 10px;
+  color: #00d2ff; /* Neon blue for speed */
+  animation: glow 1.5s infinite alternate; /* Glowing effect for icons */
+}
+
+.mercury-overlay p {
+  font-size: 1.4rem; /* Slightly smaller for a cleaner look */
+  max-width: 800px; /* Limit width for readability */
+  margin: 0 auto;
+  line-height: 1.8;  /* Increased line height for readability */
+  background-color: rgba(0, 0, 0, 0.6); /* Darker background for better text visibility */
+  padding: 20px;
+  border-radius: 10px;
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
+}
+
+.mercury-overlay p i {
+  color: #ffab00; /* Golden color for rocket */
+  margin-right: 10px;
+  animation: spin 2s linear infinite; /* Spinning rocket */
+}
+
+.mercury-overlay div {
+  padding: 40px; /* Increased padding for better spacing */
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.3); /* Transparent background for container */
+  max-width: 900px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
+}
+
+/* Button Styles */
+.mercury-overlay button {
+  background-color: #ff5733; /* Bright, vibrant button color */
+  color: white;
+  border-radius: 25px; /* Rounded corners for a softer look */
+  padding: 10px 20px;
+  margin-top: 20px; /* Add space between paragraph and button */
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.mercury-overlay button:hover {
+  background-color: #e74c3c; /* Darker shade on hover */
+}
+
+/* Icon Glow Effect */
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff, 0 0 30px #00d2ff;
+  }
+  100% {
+    text-shadow: 0 0 20px #00d2ff, 0 0 30px #00d2ff, 0 0 40px #00d2ff;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Apply glow animation to the bolt */
+.mercury-overlay h1 .fa-bolt {
+  animation: glow 1.5s infinite alternate;
+}
+
+/* Apply spin to the rocket */
+.mercury-overlay p .fa-rocket {
+  animation: spin 3s linear infinite;
+}
