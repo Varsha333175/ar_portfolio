@@ -1,0 +1,107 @@
+/* Ensure the container fits within the viewport height */
+.calendar-container {
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 10px;
+    max-width: 1200px;
+    height: 80vh; /* Set a fixed height to fit in the viewport */
+    overflow-y: auto; /* Add scroll when content exceeds height */
+    margin: 0 auto;
+  }
+  
+  .calendar-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .calendar-header h1 {
+    font-size: 2.5rem;
+    color: #f8f8f8;
+  }
+  
+  /* Grid layout for the calendar */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* 12 months */
+    grid-auto-rows: minmax(150px, auto); /* Flexible row heights */
+    gap: 10px;
+    justify-items: stretch;
+  }
+  
+  .calendar-year {
+    grid-column: 1 / -1; /* Spans all 12 columns */
+    text-align: center;
+    background-color: #ffcc00;
+    color: white;
+    padding: 10px;
+    font-size: 1.5rem;
+    border-radius: 5px;
+  }
+  
+  /* Style for each month block */
+  .calendar-month {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1rem;
+    padding: 10px;
+    position: relative;
+  }
+  
+  /* Style for the job entries */
+  .calendar-entry {
+    background-color: #e0f7fa; /* Light blue */
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Hover effect */
+  .calendar-entry:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .calendar-entry h4 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .calendar-entry p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .calendar-entry ul {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  .calendar-entry ul li {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .calendar-grid {
+      grid-template-columns: repeat(2, 1fr); /* Stack months into 2 columns */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .calendar-grid {
+      grid-template-columns: 1fr; /* Stack months in a single column */
+    }
+  }
+  

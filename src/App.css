@@ -1,7 +1,7 @@
 /* Body and Root */
 body {
   margin: 0;
-  overflow: hidden;
+  overflow: auto;
 }
 
 html, #root {
@@ -509,4 +509,128 @@ button:hover {
 /* Apply spin to the rocket */
 .mercury-overlay p .fa-rocket {
   animation: spin 3s linear infinite;
+}
+
+
+/* Venus styles */
+/* Venus-specific overlay */
+.venus-overlay {
+  /* background: url('models/venus_surface.jpg') no-repeat center center fixed; */
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  perspective: 1500px; /* Perspective for 3D effect */
+}
+
+.venus-experience-overlay h1 {
+  font-size: 3.5rem;
+  color: #f8f8f8; /* Light text for Venus theme */
+  margin-bottom: 40px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Add shadow for readability */
+}
+
+/* Hide scrollbar for WebKit-based browsers (Chrome, Safari, etc.) */
+.timeline-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.timeline-container {
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+/* General style for the timeline container */
+.timeline-container {
+  height: 80vh;
+  overflow-y: scroll; /* Scroll functionality remains */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  perspective: 1500px;
+}
+
+.timeline-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  height: auto; /* Ensure the wrapper can grow with content */
+  padding-bottom: 100vh; /* Make sure there's enough content to scroll through */
+}
+
+.timeline-entry {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  margin: 30px 0;
+  width: 350px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: color 0.5s ease-in-out; /* Smooth transition for text color */
+}
+
+
+.timeline-entry:hover {
+  transform: scale(1.05) translateZ(20px); /* Hover effect for depth */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.timeline-entry h3 {
+  font-size: 1.8rem;
+  color: #ffcc00; /* Elegant light gold for Venus theme */
+  margin-bottom: 10px;
+}
+
+.timeline-entry h4 {
+  font-size: 1.4rem;
+  color: #ffffff; /* Soft white text for company names */
+  margin-bottom: 10px;
+}
+
+.timeline-entry p {
+  font-size: 1.2rem;
+  color: #dcdcdc; /* Soft gray for dates */
+}
+
+.timeline-entry ul {
+  list-style: none;
+  margin-top: 10px;
+  padding-left: 0;
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.timeline-entry li {
+  margin-bottom: 10px;
+}
+
+.timeline-entry li svg {
+  transition: transform 0.3s ease;
+}
+
+.timeline-entry li:hover svg {
+  transform: scale(1.2); /* Grow the icon slightly on hover */
+}
+
+
+@keyframes rotateTimeline {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .timeline-entry {
+    width: 90%;
+  }
 }

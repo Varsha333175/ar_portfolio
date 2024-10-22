@@ -7,6 +7,8 @@ import gsap from 'gsap';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt, faRocket } from '@fortawesome/free-solid-svg-icons';
+import { FaCode, FaCalendarAlt, FaChartLine, FaRocket, FaUsers } from 'react-icons/fa'; // Import necessary icons
+
 
 
 // Component to create an orbit path
@@ -311,7 +313,98 @@ function AccordionCard({ title, content }) {
     </div>
   );
 }
+const workExperience = [
+  {
+    title: "Java Full Stack Developer",
+    company: "PwC US",
+    startDate: "2021-09-01",
+    endDate: "2022-12-31",
+    content: `
+      Harnessed my expertise in full-stack development to streamline API performance, delivering a remarkable 20% boost, 
+      seamlessly managing over 5 million transactions daily. I thrived in architecting scalable solutions under tight deadlines, 
+      ensuring the system was both fast and reliable.
+    `,
+    achievements: [
+      { icon: FaChartLine, description: "Boosted API performance by 20%." },
+      { icon: FaRocket, description: "Redesigned UI for 50,000+ users." },
+      { icon: FaUsers, description: "Led Agile sprints for a 15-member team." }
+    ]
+  },
+  {
+    title: "Associate Software Engineer",
+    company: "DXC Technology",
+    startDate: "2021-01-01",
+    endDate: "2021-08-31",
+    content: `
+      Faced with complex healthcare data, I devised innovative processing techniques that reduced processing time by 30%, 
+      enabling the seamless handling of medical records with accuracy and speed. I ensured security with JWT and 
+      Spring Security while creating modular, reusable UI components.
+    `,
+    achievements: [
+      { icon: FaChartLine, description: "Improved healthcare data processing by 30%." },
+      { icon: FaCode, description: "Secured API transactions with JWT and Spring Security." },
+      { icon: FaRocket, description: "Developed modular UI components using Angular and TypeScript." }
+    ]
+  }
+];
 
+// VenusTimeline Component (can be put in a separate file if needed)
+
+
+const VenusTimeline = ({ workExperience }) => {
+  // Function to handle scroll event
+  const handleScroll = () => {
+    const timelineEntries = document.querySelectorAll('.timeline-entry');
+    const scrollPosition = window.scrollY;
+    
+    timelineEntries.forEach((entry, index) => {
+      const entryPosition = entry.getBoundingClientRect().top + window.scrollY;
+      // You can change the text color based on scroll position
+      if (scrollPosition > entryPosition - 300) {
+        entry.style.color = "#ffcc00"; // Example: Changing to a gold color for Venus theme
+      } else {
+        entry.style.color = "#ffffff"; // Default white color for text
+      }
+    });
+  };
+
+  // Attach the scroll event listener
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    // Clean up the event listener when component unmounts
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  return (
+    <div className="venus-experience-overlay">
+      <h1>Professional Journey</h1>
+      <div className="timeline-container">
+        <div className="timeline-wrapper">
+          {workExperience.map((entry, index) => (
+            <div className="timeline-entry" key={index}>
+              <h3>{entry.title}</h3>
+              <h4>{entry.company}</h4>
+              <p>
+                <FaCalendarAlt /> {new Date(entry.startDate).getFullYear()} - {new Date(entry.endDate).getFullYear()}
+              </p>
+              <p>{entry.content}</p>
+              <ul>
+                {entry.achievements.map((achievement, idx) => (
+                  <li key={idx}>
+                    <achievement.icon /> {achievement.description}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 
@@ -373,15 +466,16 @@ function App() {
   break;
 
 
+      // Venus Surface for Experience (Work Timeline)
       case 'Venus':
-        setSurfaceImage('models/venus_surface.jpg');
+        setSurfaceImage('models/venus_surface.jpg'); // Venus-themed background image
         setSurfaceContent(
           <div>
-            <h1>Experience Overview</h1>
-            <p>Venus-specific content here.</p>
+            {/* Use the VenusTimeline component and pass the workExperience data */}
+            <VenusTimeline workExperience={workExperience} />
           </div>
         );
-        setCustomClass('venus-overlay');  // Apply Venus-specific class
+        setCustomClass('venus-overlay');  // Apply Venus-specific class for custom styling
         break;
         case 'Earth':
       setSurfaceContent(<EarthSurface />); // Render EarthSurface with scroll-responsive video
