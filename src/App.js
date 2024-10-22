@@ -6,70 +6,6 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import './App.css';
 
-function MercurySurface() {
-  return (
-    <>
-      <pointLight position={[-5, 2, 5]} intensity={1} color="#FF4500" />
-      <pointLight position={[5, 2, 5]} intensity={1} color="#00BFFF" />
-      
-      {/* Sunlit Side (Hot Zone) */}
-      <Text
-        position={[-3, 1.5, 0]} 
-        fontSize={1.1}
-        color="#FF4500"
-        emissive="#FF4500"
-        emissiveIntensity={1.2}
-        outlineWidth={0.05}
-        outlineColor="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Resilience
-      </Text>
-      <Text
-        position={[-3, 0, 0]} 
-        fontSize={0.8}
-        color="#FF6347"
-        emissive="#FF6347"
-        emissiveIntensity={1.0}
-        outlineWidth={0.05}
-        outlineColor="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Overcoming Challenges
-      </Text>
-
-      {/* Dark Side (Cold Zone) */}
-      <Text
-        position={[3, 1.5, 0]} 
-        fontSize={1.1}
-        color="#00BFFF"
-        emissive="#00BFFF"
-        emissiveIntensity={1.2}
-        outlineWidth={0.05}
-        outlineColor="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Adaptability
-      </Text>
-      <Text
-        position={[3, 0, 0]} 
-        fontSize={0.8}
-        color="#87CEFA"
-        emissive="#87CEFA"
-        emissiveIntensity={1.0}
-        outlineWidth={0.05}
-        outlineColor="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Versatility
-      </Text>
-    </>
-  );
-}
 
 
 // Component to create an orbit path
@@ -376,47 +312,7 @@ function AccordionCard({ title, content }) {
 }
 
 
-function ChatBot() {
-  const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Hello! How can I help you today?' },
-  ]);
-  const [inputValue, setInputValue] = useState('');
 
-  const handleSendMessage = () => {
-    if (inputValue.trim() !== '') {
-      const newMessages = [
-        ...messages,
-        { type: 'user', text: inputValue },
-        { type: 'bot', text: 'This is a bot response!' }, // Add bot response logic here
-      ];
-      setMessages(newMessages);
-      setInputValue('');
-    }
-  };
-
-  return (
-    <div className="chatbot-container">
-      <div className="chatbot-header">Chat with me!</div>
-      <div className="chatbot-messages">
-        {messages.map((msg, index) => (
-          <div key={index} className={`chatbot-message ${msg.type}`}>
-            {msg.text}
-          </div>
-        ))}
-      </div>
-      <div className="chatbot-input-container">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
-    </div>
-  );
-}
 
 // Controls Component
 function Controls({ selectedPlanet, planetRef }) {
