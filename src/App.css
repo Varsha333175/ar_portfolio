@@ -595,74 +595,106 @@ h1 {
 
 /* Mars-specific styles */
 .mars-overlay {
-  background: linear-gradient(135deg, #2d0b0a, #7b1813); /* Bold, Mars-like dark red gradient */
+  background: transparent; /* Keep the background transparent */
   display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Align content from the top */
-  flex-direction: column; /* Stack items vertically */
+  justify-content: flex-start;
+  align-items: center;
   height: 100vh;
-  padding: 20px;
-  overflow-y: auto; /* Allow scrolling if needed */
+  width: 100vw;
+  overflow-x: scroll; /* Enable horizontal scrolling */
+  scroll-snap-type: x mandatory; /* Snap to each project */
+  padding-top: 100px; /* Space for the title at the top */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+.mars-overlay::-webkit-scrollbar {
+  display: none;
 }
 
 .mars-title {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff4500;
+  font-size: 2.3rem;
   text-align: center;
-  color: #ff4500; /* Bright Mars-like orange-red */
-  font-size: 2.5rem;
-  margin-bottom: 30px;
-  font-family: 'Orbitron', sans-serif; /* Futuristic font for Mars */
+  font-family: 'Orbitron', sans-serif;
+  z-index: 10;
 }
 
-.project-card {
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent card background */
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Shadow for lifting effect */
-  max-width: 800px; /* Wide card for more content */
-  color: white;
-  transition: transform 0.3s ease; /* Hover effect */
+.mars-module {
+  background-color: rgba(255, 69, 0, 0.2); /* Mars-orange with transparency */
+  border: 2px solid #ff6347;
+  padding: 30px;
+  margin: 0 60px; /* Add more horizontal space between modules */
+  border-radius: 50%; /* Circular design for module */
+  box-shadow: 0 0 20px 5px rgba(255, 99, 71, 0.6);
+  min-width: 300px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.project-card:hover {
-  transform: translateY(-10px); /* Lift card on hover */
+.mars-module:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px 10px rgba(255, 99, 71, 0.9);
 }
 
-.project-card h2 {
-  color: #ff6347; /* Bold reddish-orange for project titles */
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.project-card p {
-  font-size: 1.2rem;
-  color: #f0f0f0;
-  margin-bottom: 10px;
-  line-height: 1.6;
-}
-
-.project-card .project-tech-stack {
-  font-size: 1rem;
-  color: #f0f0f0;
-  margin-top: 10px;
-}
-
-.project-card .tech-item {
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 5px 10px;
-  border-radius: 10px;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  color: #ff6347; /* Red for tech stack */
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-/* Custom project icon for each project */
-.project-icon {
-  font-size: 3rem;
+.mars-module h2 {
   color: #ff6347;
-  margin-bottom: 20px;
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.mars-module p {
+  font-size: 1.1rem;
+  color: #f0f0f0;
+  text-align: center;
+}
+
+.project-tech-stack {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.project-tech-stack span {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ff2600;
+  margin: 5px;
+  font-size: 0.9rem;
+}
+
+/* Connecting Lines between modules */
+.connection-line {
+  position: absolute;
+  height: 2px;
+  width: 100px; /* Adjust width to connect to next module */
+  background-color: #ff6347;
+  top: 50%; /* Vertically center the line */
+  left: calc(100% + 30px); /* Adjust position to connect outside the module */
+  transform: translateY(-50%);
+  z-index: -1;
+}
+
+.connection-line:before {
+  content: '';
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: #ff4500;
+  top: -10px;
+  right: -10px;
 }

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt, faRocket } from '@fortawesome/free-solid-svg-icons';
 import { FaCode, FaCalendarAlt, FaChartLine, FaRocket, FaUsers } from 'react-icons/fa'; // Import necessary icons
 import { faHeart, faPalette, faBriefcase, faCalendarAlt,faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faCommentDots, faTachometerAlt, faTasks, faBlog } from '@fortawesome/free-solid-svg-icons';
 
 
 // Component to create an orbit path
@@ -313,98 +314,10 @@ function AccordionCard({ title, content }) {
     </div>
   );
 }
-const workExperience = [
-  {
-    title: "Java Full Stack Developer",
-    company: "PwC US",
-    startDate: "2021-09-01",
-    endDate: "2022-12-31",
-    content: `
-      Harnessed my expertise in full-stack development to streamline API performance, delivering a remarkable 20% boost, 
-      seamlessly managing over 5 million transactions daily. I thrived in architecting scalable solutions under tight deadlines, 
-      ensuring the system was both fast and reliable.
-    `,
-    achievements: [
-      { icon: FaChartLine, description: "Boosted API performance by 20%." },
-      { icon: FaRocket, description: "Redesigned UI for 50,000+ users." },
-      { icon: FaUsers, description: "Led Agile sprints for a 15-member team." }
-    ]
-  },
-  {
-    title: "Associate Software Engineer",
-    company: "DXC Technology",
-    startDate: "2021-01-01",
-    endDate: "2021-08-31",
-    content: `
-      Faced with complex healthcare data, I devised innovative processing techniques that reduced processing time by 30%, 
-      enabling the seamless handling of medical records with accuracy and speed. I ensured security with JWT and 
-      Spring Security while creating modular, reusable UI components.
-    `,
-    achievements: [
-      { icon: FaChartLine, description: "Improved healthcare data processing by 30%." },
-      { icon: FaCode, description: "Secured API transactions with JWT and Spring Security." },
-      { icon: FaRocket, description: "Developed modular UI components using Angular and TypeScript." }
-    ]
-  }
-];
 
 // VenusTimeline Component (can be put in a separate file if needed)
 
 
-const VenusTimeline = ({ workExperience }) => {
-  // Function to handle scroll event
-  const handleScroll = () => {
-    const timelineEntries = document.querySelectorAll('.timeline-entry');
-    const scrollPosition = window.scrollY;
-    
-    timelineEntries.forEach((entry, index) => {
-      const entryPosition = entry.getBoundingClientRect().top + window.scrollY;
-      // You can change the text color based on scroll position
-      if (scrollPosition > entryPosition - 300) {
-        entry.style.color = "#ffcc00"; // Example: Changing to a gold color for Venus theme
-      } else {
-        entry.style.color = "#ffffff"; // Default white color for text
-      }
-    });
-  };
-
-  // Attach the scroll event listener
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-
-    // Clean up the event listener when component unmounts
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  return (
-    <div className="venus-experience-overlay">
-      <h1>Professional Journey</h1>
-      <div className="timeline-container">
-        <div className="timeline-wrapper">
-          {workExperience.map((entry, index) => (
-            <div className="timeline-entry" key={index}>
-              <h3>{entry.title}</h3>
-              <h4>{entry.company}</h4>
-              <p>
-                <FaCalendarAlt /> {new Date(entry.startDate).getFullYear()} - {new Date(entry.endDate).getFullYear()}
-              </p>
-              <p>{entry.content}</p>
-              <ul>
-                {entry.achievements.map((achievement, idx) => (
-                  <li key={idx}>
-                    <achievement.icon /> {achievement.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 
 
@@ -521,17 +434,93 @@ case 'Venus':
       setCustomClass('earth-overlay');  // Apply Earth-specific class
       break;
         break;
+        // Import FontAwesome Icons
+
+
         case 'Mars':
-        setSurfaceImage('models/mars_surface.jpg');
-        setSurfaceContent(
-          <div>
-            <h1>Projects</h1>
-            <p>Mars-specific content here.</p>
-          </div>
-        );
-        setCustomClass('mars-overlay');  // Apply Mars-specific class
-        break;
-      case 'Jupiter':
+          setSurfaceImage('models/mars_surface.jpg'); // Mars-specific surface background
+          setSurfaceContent(
+            <div className="mars-overlay">
+              <h1 className="mars-title">Mission to Mars: Full Stack Projects</h1>
+        
+              <div className="mars-module">
+                <FontAwesomeIcon icon={faShoppingCart} className="project-icon" />
+                <h2>E-commerce Web Application</h2>
+                <p>
+                  A fully functional e-commerce platform with product catalog, shopping cart, and payment gateway integration.
+                </p>
+                <div className="project-tech-stack">
+                  <span><b>React</b></span>
+                  <span><b>Node.js</b></span>
+                  <span><b>MongoDB</b></span>
+                  <span><b>Stripe API</b></span>
+                </div>
+                <div className="connection-line"></div>
+              </div>
+        
+              <div className="mars-module">
+                <FontAwesomeIcon icon={faCommentDots} className="project-icon" />
+                <h2>Real-time Chat Application</h2>
+                <p>
+                  Developed a real-time chat application using WebSocket technology, with features like private rooms and message encryption.
+                </p>
+                <div className="project-tech-stack">
+                  <span><b>React</b></span>
+                  <span><b>Node.js</b></span>
+                  <span><b>Socket.io</b></span>
+                </div>
+                <div className="connection-line"></div>
+              </div>
+        
+              <div className="mars-module">
+                <FontAwesomeIcon icon={faTachometerAlt} className="project-icon" />
+                <h2>Social Media Dashboard</h2>
+                <p>
+                  A comprehensive dashboard for social media analytics, featuring real-time data visualization, post scheduling, and user engagement metrics.
+                </p>
+                <div className="project-tech-stack">
+                  <span><b>Angular</b></span>
+                  <span><b>Node.js</b></span>
+                  <span><b>PostgreSQL</b></span>
+                  <span><b>Chart.js</b></span>
+                </div>
+                <div className="connection-line"></div>
+              </div>
+        
+              <div className="mars-module">
+                <FontAwesomeIcon icon={faTasks} className="project-icon" />
+                <h2>Task Management System</h2>
+                <p>
+                  Built a Kanban-style task manager with real-time updates, team collaboration features, and role-based access control.
+                </p>
+                <div className="project-tech-stack">
+                  <span><b>Vue.js</b></span>
+                  <span><b>Express.js</b></span>
+                  <span><b>MongoDB</b></span>
+                </div>
+                <div className="connection-line"></div>
+              </div>
+        
+              <div className="mars-module">
+                <FontAwesomeIcon icon={faBlog} className="project-icon" />
+                <h2>Blog Platform with Admin Panel</h2>
+                <p>
+                  A content management system (CMS) that allows users to create and manage blog posts, with admin controls for user management and content moderation.
+                </p>
+                <div className="project-tech-stack">
+                  <span><b>React</b></span>
+                  <span><b>Node.js</b></span>
+                  <span><b>MySQL</b></span>
+                </div>
+                <div className="connection-line"></div>
+              </div>
+        
+            </div>
+          );
+          setCustomClass('mars-overlay');  // Apply Mars-specific class
+          break;
+        
+        case 'Jupiter':
         setSurfaceImage('models/jupiter_surface.jpg');
         setSurfaceContent(
           <div>
