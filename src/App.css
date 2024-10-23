@@ -1,7 +1,7 @@
 /* Body and Root */
 body {
   margin: 0;
-  overflow: auto;
+  /* overflow: auto; */
 }
 
 html, #root {
@@ -46,7 +46,7 @@ button:hover {
   width: 100vw;  /* Full viewport width */
   height: 100vh; /* Full viewport height */
   background: #000; /* Dark space background */
-  overflow-y: scroll; /* Enable scrolling */
+  overflow-y: hidden; /* Enable scrolling */
   position: relative;
 }
 
@@ -202,10 +202,7 @@ button:hover {
   background-color: rgba(139, 69, 19, 0.9); /* Brownish red for Mars */
 }
 
-.jupiter-overlay {
-  color: #ffffff;
-  background-color: rgba(218, 165, 32, 0.9); /* Golden yellow for Jupiter */
-}
+
 
 .saturn-overlay {
   color: #000000;
@@ -298,9 +295,6 @@ button:hover {
   background-color: #B22222;
 }
 
-.planet-jupiter {
-  background-color: #DAA520;
-}
 
 .planet-saturn {
   background-color: #D2B48C;
@@ -697,4 +691,141 @@ h1 {
   background-color: #ff4500;
   top: -10px;
   right: -10px;
+}
+
+.jupiter-overlay {
+  background: radial-gradient(circle, rgba(29,29,39,1) 0%, rgba(0,0,0,0.9) 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-height: 100vh; /* Ensure the content doesn’t exceed the viewport */
+  overflow-y: auto; /* Enable scrolling */
+}
+
+.certifications-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.certifications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+  gap: 20px;
+  max-height: 60vh; /* Ensure the grid doesn't exceed viewport height */
+  overflow-y: auto; /* Scrolls the grid content if necessary */
+  padding: 10px;
+}
+
+.certification-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.certification-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.certification-card img {
+  width: 50px;
+  margin-bottom: 15px;
+}
+
+.certification-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.certification-description {
+  font-size: 1em;
+  color: #FFFFFF;
+  opacity: 0.8;
+  margin-top: 10px;
+}
+
+/* Optional: Style for scrollbars */
+.certifications-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.certifications-grid::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+/* Saturn-specific overlay */
+.saturn-overlay {
+  background: radial-gradient(circle, rgba(44,44,84,1) 0%, rgba(0,0,0,0.9) 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.education-section {
+  text-align: center;
+  max-width: 800px;
+  margin: auto;
+}
+
+.education-title {
+  font-size: 2.5em;
+  color: #FFD700; /* Golden title to fit the cosmic theme */
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.education-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 800px;
+}
+
+.education-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.university-logo {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.university-info h2 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+  color: #FFD700;
+}
+
+.university-info h3 {
+  font-size: 1.4em;
+  color: #B0E0E6;
+}
+
+.university-info p {
+  font-size: 1.1em;
+  color: #FFFFFF;
+  opacity: 0.9;
+  margin: 5px 0;
 }

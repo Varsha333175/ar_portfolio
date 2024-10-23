@@ -523,21 +523,75 @@ case 'Venus':
         case 'Jupiter':
         setSurfaceImage('models/jupiter_surface.jpg');
         setSurfaceContent(
-          <div>
-            <h1>Certifications</h1>
-            <p>Jupiter-specific content here.</p>
+          <div className="certifications-section">
+            <h1 className="certifications-title">Certifications</h1>
+            <div className="certifications-grid">
+              <div className="certification-card">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS Logo" />
+                <div className="certification-title">AWS Certified Solutions Architect – Associate</div>
+                <div className="certification-description">Expertise in designing and deploying scalable systems on AWS.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Java_programming_language_logo.svg/1024px-Java_programming_language_logo.svg.png" alt="Java Certification" />
+                <div className="certification-title">Java SE 11 Developer Certification</div>
+                <div className="certification-description">Advanced understanding of Java SE 11 and modular programming.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg" alt="Udemy Certification" />
+                <div className="certification-title">Full Stack Web Developer Bootcamp</div>
+                <div className="certification-description">Comprehensive course covering frontend and backend development.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Spring_Framework_Logo_2018.svg" alt="Spring Boot Logo" />
+                <div className="certification-title">Mastering Spring Framework 5 with Spring Boot</div>
+                <div className="certification-description">In-depth course on Spring 5 and Spring Boot 2 for enterprise applications.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png" alt="Docker Logo" />
+                <div className="certification-title">Docker and Kubernetes: The Complete Guide</div>
+                <div className="certification-description">Covers containerization with Docker and orchestration using Kubernetes.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python Certification" />
+                <div className="certification-title">Python for Data Science and Machine Learning Bootcamp</div>
+                <div className="certification-description">Covers Python, Pandas, Matplotlib, and key data science concepts.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://raw.githubusercontent.com/spring-cloud/spring-cloud-contract/3.0.x/docs/src/main/asciidoc/images/spring-cloud-logo.png" alt="Spring Cloud Logo" />
+                <div className="certification-title">Microservices with Spring Boot and Spring Cloud</div>
+                <div className="certification-description">Focuses on building microservices using Spring Boot and Spring Cloud.</div>
+              </div>
+              <div className="certification-card">
+                <img src="https://www.jenkins.io/images/logos/jenkins/jenkins.svg" alt="Jenkins Certification" />
+                <div className="certification-title">The Complete Guide to Jenkins and CI/CD</div>
+                <div className="certification-description">Covers CI/CD pipeline best practices with Jenkins.</div>
+              </div>
+            </div>
           </div>
         );
+        
+        
+        
         setCustomClass('jupiter-overlay');  // Apply Jupiter-specific class
         break;
       case 'Saturn':
         setSurfaceImage('models/saturn_surface.jpg');
         setSurfaceContent(
-          <div>
-            <h1>Education</h1>
-            <p>Saturn-specific content here.</p>
+          <div className="education-section">
+            <h1 className="education-title">Education</h1>
+            <div className="education-card">
+              <img src="https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/239779234_10160348468334587_4746985255056824219_n.png?stp=dst-png_s200x200&_nc_cat=105&ccb=1-7&_nc_sid=f4b9fd&_nc_ohc=uAgy9hAiAfEQ7kNvgGSsy7R&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=AJ_1MNuUSXZk9rgYGHeFURi&oh=00_AYB0tIKwdcd0o4QVenHjgBPjCtgycBgUwwJJN0hMi84nCw&oe=671F5C18" alt="UNC Charlotte Logo" className="university-logo" />
+              <div className="university-info">
+                <h2>University of North Carolina at Charlotte</h2>
+                <h3>Master’s in Computer Science</h3>
+                <p><strong>GPA:</strong> 3.9/4</p>
+                <p><strong>Duration:</strong> January 2023 - May 2024</p>
+                <p><strong>Relevant Coursework:</strong> Data Structures, Algorithms, Cloud Computing, Database Systems, Machine Learning, Web Development, Software Engineering</p>
+              </div>
+            </div>
           </div>
         );
+        
         setCustomClass('saturn-overlay');  // Apply Saturn-specific class
         break;
       default:
