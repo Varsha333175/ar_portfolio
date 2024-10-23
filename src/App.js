@@ -8,7 +8,7 @@ import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt, faRocket } from '@fortawesome/free-solid-svg-icons';
 import { FaCode, FaCalendarAlt, FaChartLine, FaRocket, FaUsers } from 'react-icons/fa'; // Import necessary icons
-
+import { faHeart, faPalette, faBriefcase, faCalendarAlt,faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 
 // Component to create an orbit path
@@ -466,18 +466,57 @@ function App() {
   break;
 
 
-      // Venus Surface for Experience (Work Timeline)
-      case 'Venus':
-        setSurfaceImage('models/venus_surface.jpg'); // Venus-themed background image
-        setSurfaceContent(
-          <div>
-            {/* Use the VenusTimeline component and pass the workExperience data */}
-            <VenusTimeline workExperience={workExperience} />
-          </div>
-        );
-        setCustomClass('venus-overlay');  // Apply Venus-specific class for custom styling
-        break;
-        case 'Earth':
+
+
+
+
+case 'Venus':
+  setSurfaceImage('models/venus_surface.jpg'); // Venus-specific background
+  setSurfaceContent(
+    <div>
+      <h1>Work Experience</h1> {/* Title added at the top */}
+
+      <div className="work-experience-card">
+        <h2>Associate Software Engineer</h2>
+        <h3>DXC Technology</h3>
+        <p>
+          <FontAwesomeIcon icon={faCalendarAlt} /> 2020 - 2021
+        </p>
+        <p>
+          At DXC Technology, I navigated the complexities of handling healthcare data by developing real-time solutions that directly impacted the company's operational efficiency.  
+          Beyond writing code, I immersed myself in understanding the end-to-end flow of healthcare data systems, anticipating potential bottlenecks before they became issues. 
+          Collaborating with stakeholders, I not only improved API security but also built trust in our data exchange solutions, ensuring that healthcare professionals could rely on our platforms for faster and more secure operations.
+        </p>
+        <ul className="bullet-points">
+          <li><FontAwesomeIcon icon={faCheckCircle} /> Enabled healthcare providers to reduce administrative overhead by implementing solutions that processed patient data 30% faster.</li>
+          <li><FontAwesomeIcon icon={faCheckCircle} /> Fostered cross-team collaborations to integrate secure APIs, positioning the company to meet stringent healthcare compliance standards.</li>
+          <li><FontAwesomeIcon icon={faCheckCircle} /> Took ownership of UI enhancements, transforming end-user feedback into actionable design changes that led to better system adoption.</li>
+        </ul>
+      </div>
+
+      <div className="work-experience-card">
+        <h2>Java Full Stack Developer</h2>
+        <h3>PwC US</h3>
+        <p>
+          <FontAwesomeIcon icon={faCalendarAlt} /> 2021 - 2022
+        </p>
+        <p>
+          At PwC, I was more than just a developer; I was a trusted advisor on how to optimize critical systems for both performance and scalability.  
+          My role required not only technical acumen but also the ability to foresee business challenges and propose solutions before they arose.  
+          Leading initiatives that processed over 5 million transactions daily, I often found myself consulting with senior management, shaping strategic decisions on system architecture, and guiding teams toward scalable solutions.
+        </p>
+        <ul className="bullet-points">
+          <li><FontAwesomeIcon icon={faCheckCircle} /> Spearheaded the redesign of a platform serving 50,000+ users, resulting in a 25% increase in engagement—proving that technical solutions can drive business growth.</li>
+          <li><FontAwesomeIcon icon={faCheckCircle} /> Mentored junior developers, sharing insights on code optimization, which accelerated project delivery timelines by 15%.</li>
+          <li><FontAwesomeIcon icon={faCheckCircle} /> Trusted by senior leadership to advise on system scaling, I implemented strategies that ensured our APIs could handle a 20% boost in traffic without compromising performance.</li>
+        </ul>
+      </div>
+    </div>
+  );
+  setCustomClass('venus-overlay');  // Apply Venus-specific class
+  break;
+
+    case 'Earth':
       setSurfaceContent(<EarthSurface />); // Render EarthSurface with scroll-responsive video
       setCustomClass('earth-overlay');  // Apply Earth-specific class
       break;
