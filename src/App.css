@@ -531,7 +531,6 @@ h1 {
   font-size: 2rem; /* Adjust title size */
   color: #ffc300; /* Golden title color */
 }
-
 .work-experience-card {
   background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent card background */
   padding: 20px; /* Reduced padding */
@@ -540,7 +539,7 @@ h1 {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow */
   max-width: 600px; /* Increased width to avoid clumsy text wrapping */
   text-align: center; /* Center align for flashcard style */
-  color: #d3d3d3; /* Light gray text for better readability */
+  color: #d3d3d3; /* Light gray for headings */
 }
 
 .work-experience-card h2 {
@@ -562,14 +561,14 @@ h1 {
 
 .work-experience-card p {
   font-size: 1.2rem; /* Slightly increased font size */
-  color: #d3d3d3; /* Light gray for paragraph text */
+  color: #ffffff; /* Changed to white for paragraph text */
   margin-bottom: 15px; /* Reduced margin */
   line-height: 1.6; /* Adjust line height for readability */
 }
 
 .work-experience-card .bullet-points {
   font-size: 1.1rem; /* Slightly increased bullet point size */
-  color: #d3d3d3; /* Light gray for bullet points */
+  color: #ffffff; /* Changed to white for bullet points */
   list-style-type: none;
   padding-left: 0;
   margin-top: 5px; /* Reduced margin */
@@ -585,6 +584,7 @@ h1 {
   color: #ffc300; /* Golden color for bullet icons */
   margin-right: 5px; /* Reduced spacing */
 }
+
 
 
 /* Mars-specific styles */
@@ -665,7 +665,7 @@ h1 {
   padding: 5px 10px;
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ff2600;
+  color: #ffffff;
   margin: 5px;
   font-size: 0.9rem;
 }
