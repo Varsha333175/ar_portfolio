@@ -829,3 +829,52 @@ h1 {
   opacity: 0.9;
   margin: 5px 0;
 }
+
+/* Overlay message styling */
+.overlay-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;  /* Ensure it is on top of the 3D canvas */
+  pointer-events: none;  /* Prevent interaction with the message */
+}
+
+/* Styling the hand icon */
+.hand-icon {
+  font-size: 80px;  /* Adjust to match the size in the NASA example */
+  margin-bottom: 10px;  /* Space between icon and text */
+  color: white;  /* White color to match NASA’s style */
+  opacity: 1;  /* Ensure the icon is fully visible */
+}
+
+/* Styling the "click & drag to rotate" text */
+.overlay-message p {
+  font-size: 1.5rem;  /* Adjust font size as needed */
+  font-weight: 600;  /* Bold */
+  color: white;  /* White color to match NASA’s style */
+  text-align: center;  /* Center text */
+  margin: 0;
+  padding: 0;
+  text-transform: lowercase;  /* Ensure text is in lowercase */
+  opacity: 1;  /* Ensure the text is fully visible */
+  font-family: 'Arial', sans-serif;  /* Simple font like NASA */
+}
+
+.probe-tooltip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 16px;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-family: 'Orbitron', sans-serif;
+  white-space: nowrap;
+  color: #FFD700; /* Glowing gold text */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}

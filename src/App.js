@@ -1,17 +1,48 @@
 import React, { useRef, useState, useEffect, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Stars, Sphere, useGLTF, SpotLight, Text } from '@react-three/drei';
+import { OrbitControls, Stars, Sphere, useGLTF, SpotLight, Text, Html } from '@react-three/drei'; // Add Html here
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt, faRocket } from '@fortawesome/free-solid-svg-icons';
-import { FaCode, FaCalendarAlt, FaChartLine, FaRocket, FaUsers } from 'react-icons/fa'; // Import necessary icons
-import { faHeart, faPalette, faBriefcase, faCalendarAlt,faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { FaCode, FaCalendarAlt, FaChartLine, FaRocket, FaUsers } from 'react-icons/fa';
+import { faHeart, faPalette, faBriefcase, faCalendarAlt, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { faShoppingCart, faCommentDots, faTachometerAlt, faTasks, faBlog } from '@fortawesome/free-solid-svg-icons';
+import { FaHandPointer } from 'react-icons/fa';  // Import FontAwesome hand icon
 
+// Floating Probe Tooltip component
+function ProbeTooltip({ planetPosition, hovered }) {
+  const probeRef = useRef();
 
+  // Probe Animation (Bobbing and Rotation)
+  useFrame(() => {
+    if (probeRef.current) {
+      probeRef.current.position.y += Math.sin(Date.now() * 0.002) * 0.01; // Bobbing effect
+      probeRef.current.rotation.y += 0.01; // Slow rotation for realistic effect
+    }
+  });
+
+  return (
+    <>
+      {/* Small probe floating near the planet */}
+      <mesh ref={probeRef} position={[planetPosition.x + 3, planetPosition.y + 2, planetPosition.z]} scale={0.4}>
+        <sphereGeometry args={[0.5, 16, 16]} />
+        <meshStandardMaterial color="#00ffcc" />
+      </mesh>
+
+      {/* Tooltip HUD text */}
+      {hovered && (
+        <Html position={[planetPosition.x + 3, planetPosition.y + 4.5, planetPosition.z]}>
+          <div className="probe-tooltip">
+            <span className="tooltip-text">Click to Explore</span>
+          </div>
+        </Html>
+      )}
+    </>
+  );
+}
 // Component to create an orbit path
 function EllipticalOrbitPath({ radiusX, radiusZ, color, lineWidth }) {
   const points = [];
@@ -64,10 +95,11 @@ function CameraController({ selectedPlanet, planetPositions }) {
     if (selectedPlanet && planetPositions[selectedPlanet]) {
       const [x, y, z] = planetPositions[selectedPlanet];
       if (prevPlanet.current !== selectedPlanet) {
+        // Zoom the camera into the planet for a "landing" effect
         gsap.to(camera.position, {
-          x: x + 5,
-          y: y + 2,
-          z: z + 5,
+          x: x,
+          y: y + 1,
+          z: z,
           duration: 2,
           ease: "power2.out",
           onUpdate: () => camera.lookAt(x, y, z)
@@ -75,6 +107,7 @@ function CameraController({ selectedPlanet, planetPositions }) {
         prevPlanet.current = selectedPlanet;
       }
     } else {
+      // Reset camera to default position
       gsap.to(camera.position, {
         x: 0,
         y: 15,
@@ -90,6 +123,7 @@ function CameraController({ selectedPlanet, planetPositions }) {
   return null;
 }
 
+
 // Generic Planet Component with labels
 // Generic Planet Component with improved labels that follow the planet
 // Generic Planet Component with labels that follow the planet
@@ -97,24 +131,34 @@ function CameraController({ selectedPlanet, planetPositions }) {
 
 
 
-function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationSpeed, selected, onClick, name }) {
+function Planet({
+  modelPath,
+  orbitRadiusX,
+  orbitRadiusZ,
+  speed,
+  scale,
+  rotationSpeed,
+  selected,    // Selection state from dropdown
+  onClick,
+  name,
+}) {
   const ref = useRef();
   const labelRef = useRef();
   const { scene } = useGLTF(modelPath);
+  const [hovered, setHovered] = useState(false);
 
+  // Move planet and rotate it on its orbit
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime() * speed;
     const x = orbitRadiusX * Math.cos(t);
     const z = orbitRadiusZ * Math.sin(t);
 
     if (!selected) {
-      // Position the planet along its orbit
       ref.current.position.set(x, 0, z);
       ref.current.rotation.y += rotationSpeed;
 
-      // Position the label for visibility above the planet
       if (labelRef.current) {
-        const labelY = name === "Certifications" ? 4.5 : name === "Education" ? 5 : 2.5; // Adjusted y position
+        const labelY = name === "Certifications" ? 4.5 : name === "Education" ? 5 : 2.5;
         labelRef.current.position.set(x, labelY, z);
       }
     } else {
@@ -127,19 +171,39 @@ function Planet({ modelPath, orbitRadiusX, orbitRadiusZ, speed, scale, rotationS
 
   return (
     <>
-      <primitive object={scene} ref={ref} scale={scale} onClick={onClick} />
+      <primitive
+        object={scene}
+        ref={ref}
+        scale={hovered && !selected ? scale * 1.05 : scale}  // Only scale on hover if not selected
+        onPointerOver={() => !selected && setHovered(true)}  // Only set hover state when not selected
+        onPointerOut={() => setHovered(false)}
+        onClick={onClick}  // Allow clicks regardless of hover state
+      />
+
+      {/* Conditionally render the planet label only when not selected */}
       {!selected && (
-        <Text 
-          ref={labelRef} 
-          fontSize={1.1} // Increased font size for better visibility
-          color="#00BFFF" // Changed to a gold/yellow color
-          anchorX="center" 
+        <Text
+          ref={labelRef}
+          fontSize={1.1}
+          color={hovered ? "#FFD700" : "#00BFFF"}  // Hover effect for label when not selected
+          anchorX="center"
           anchorY="middle"
-          outlineWidth={0.05} 
-          outlineColor="#000000" // Black outline for contrast
+          outlineWidth={0.05}
+          outlineColor="#000000"
         >
           {name}
         </Text>
+      )}
+
+      {/* Add the probe tooltip if hovered and not selected */}
+      {hovered && !selected && <ProbeTooltip planetPosition={ref.current.position} hovered={hovered} />}
+
+      {/* Glow effect only when planet is selected */}
+      {selected && (
+        <mesh position={ref.current.position}>
+          <ringGeometry args={[scale * 1.1, scale * 1.15, 32]} />
+          <meshBasicMaterial color="#FFD700" side={THREE.DoubleSide} />
+        </mesh>
       )}
     </>
   );
@@ -345,6 +409,11 @@ function App() {
   const [surfaceContent, setSurfaceContent] = useState(null);
   const [customClass, setCustomClass] = useState('');  // New state to handle custom styles
   const planetRef = useRef();
+  const [hasInteracted, setHasInteracted] = useState(false);  // Track user interaction
+  const [showMessage, setShowMessage] = useState(true);  // Control message visibility
+  const interactionTimeoutRef = useRef(null);  // Reference to clear timeout if needed
+
+
 
   const planetPositions = {
     Mercury: [6, 0, 3],
@@ -360,167 +429,167 @@ function App() {
 
     switch (planet) {
       case 'Mercury':
-  setSurfaceImage('models/mercury_surface.jpg');
-  setSurfaceContent(
-    <div>
-      <h1>
-        <FontAwesomeIcon icon={faBolt} size="2x" color="#00d2ff" /> Speed and Agility
-      </h1>
-      <p>
-        <FontAwesomeIcon icon={faRocket} size="2x" color="#ffab00" /> {/* Larger and more colorful rocket */}
-        Just like the swift planet Mercury, I excel in fast-paced environments where agility and efficiency are critical. 
-        My experience optimizing API performance—reducing response times by 20%—and delivering solutions under tight deadlines 
-        reflects my ability to move quickly without compromising quality. Whether it's architecting APIs or leading agile sprints, 
-        I'm always ready to solve complex problems with speed and precision.
-      </p>
-    </div>
-  );
-  setCustomClass('mercury-overlay');  // Apply Mercury-specific class
-  break;
-
-
-
-
-
-
-case 'Venus':
-  setSurfaceImage('models/venus_surface.jpg'); // Venus-specific background
-  setSurfaceContent(
-    <div>
-      <h1>Work Experience</h1> {/* Title added at the top */}
-
-      <div className="work-experience-card">
-        <h2>Associate Software Engineer</h2>
-        <h3>DXC Technology</h3>
-        <p>
-          <FontAwesomeIcon icon={faCalendarAlt} /> 2020 - 2021
-        </p>
-        <p>
-          At DXC Technology, I navigated the complexities of handling healthcare data by developing real-time solutions that directly impacted the company's operational efficiency.  
-          Beyond writing code, I immersed myself in understanding the end-to-end flow of healthcare data systems, anticipating potential bottlenecks before they became issues. 
-          Collaborating with stakeholders, I not only improved API security but also built trust in our data exchange solutions, ensuring that healthcare professionals could rely on our platforms for faster and more secure operations.
-        </p>
-        <ul className="bullet-points">
-          <li><FontAwesomeIcon icon={faCheckCircle} /> Enabled healthcare providers to reduce administrative overhead by implementing solutions that processed patient data 30% faster.</li>
-          <li><FontAwesomeIcon icon={faCheckCircle} /> Fostered cross-team collaborations to integrate secure APIs, positioning the company to meet stringent healthcare compliance standards.</li>
-          <li><FontAwesomeIcon icon={faCheckCircle} /> Took ownership of UI enhancements, transforming end-user feedback into actionable design changes that led to better system adoption.</li>
-        </ul>
-      </div>
-
-      <div className="work-experience-card">
-        <h2>Java Full Stack Developer</h2>
-        <h3>PwC US</h3>
-        <p>
-          <FontAwesomeIcon icon={faCalendarAlt} /> 2021 - 2022
-        </p>
-        <p>
-          At PwC, I was more than just a developer; I was a trusted advisor on how to optimize critical systems for both performance and scalability.  
-          My role required not only technical acumen but also the ability to foresee business challenges and propose solutions before they arose.  
-          Leading initiatives that processed over 5 million transactions daily, I often found myself consulting with senior management, shaping strategic decisions on system architecture, and guiding teams toward scalable solutions.
-        </p>
-        <ul className="bullet-points">
-          <li><FontAwesomeIcon icon={faCheckCircle} /> Spearheaded the redesign of a platform serving 50,000+ users, resulting in a 25% increase in engagement—proving that technical solutions can drive business growth.</li>
-          <li><FontAwesomeIcon icon={faCheckCircle} /> Mentored junior developers, sharing insights on code optimization, which accelerated project delivery timelines by 15%.</li>
-          <li><FontAwesomeIcon icon={faCheckCircle} /> Trusted by senior leadership to advise on system scaling, I implemented strategies that ensured our APIs could handle a 20% boost in traffic without compromising performance.</li>
-        </ul>
-      </div>
-    </div>
-  );
-  setCustomClass('venus-overlay');  // Apply Venus-specific class
-  break;
-
-    case 'Earth':
-      setSurfaceContent(<EarthSurface />); // Render EarthSurface with scroll-responsive video
-      setCustomClass('earth-overlay');  // Apply Earth-specific class
-      break;
+        setSurfaceImage('models/mercury_surface.jpg');
+        setSurfaceContent(
+          <div>
+            <h1>
+              <FontAwesomeIcon icon={faBolt} size="2x" color="#00d2ff" /> Speed and Agility
+            </h1>
+            <p>
+              <FontAwesomeIcon icon={faRocket} size="2x" color="#ffab00" /> {/* Larger and more colorful rocket */}
+              Just like the swift planet Mercury, I excel in fast-paced environments where agility and efficiency are critical.
+              My experience optimizing API performance—reducing response times by 20%—and delivering solutions under tight deadlines
+              reflects my ability to move quickly without compromising quality. Whether it's architecting APIs or leading agile sprints,
+              I'm always ready to solve complex problems with speed and precision.
+            </p>
+          </div>
+        );
+        setCustomClass('mercury-overlay');  // Apply Mercury-specific class
         break;
-        // Import FontAwesome Icons
 
 
-        case 'Mars':
-          setSurfaceImage('models/mars_surface.jpg'); // Mars-specific surface background
-          setSurfaceContent(
-            <div className="mars-overlay">
-              <h1 className="mars-title">Mission to Mars: Full Stack Projects</h1>
-        
-              <div className="mars-module">
-                <FontAwesomeIcon icon={faShoppingCart} className="project-icon" />
-                <h2>E-commerce Web Application</h2>
-                <p>
-                  A fully functional e-commerce platform with product catalog, shopping cart, and payment gateway integration.
-                </p>
-                <div className="project-tech-stack">
-                  <span><b>React</b></span>
-                  <span><b>Node.js</b></span>
-                  <span><b>MongoDB</b></span>
-                  <span><b>Stripe API</b></span>
-                </div>
-                <div className="connection-line"></div>
-              </div>
-        
-              <div className="mars-module">
-                <FontAwesomeIcon icon={faCommentDots} className="project-icon" />
-                <h2>Real-time Chat Application</h2>
-                <p>
-                  Developed a real-time chat application using WebSocket technology, with features like private rooms and message encryption.
-                </p>
-                <div className="project-tech-stack">
-                  <span><b>React</b></span>
-                  <span><b>Node.js</b></span>
-                  <span><b>Socket.io</b></span>
-                </div>
-                <div className="connection-line"></div>
-              </div>
-        
-              <div className="mars-module">
-                <FontAwesomeIcon icon={faTachometerAlt} className="project-icon" />
-                <h2>Social Media Dashboard</h2>
-                <p>
-                  A comprehensive dashboard for social media analytics, featuring real-time data visualization, post scheduling, and user engagement metrics.
-                </p>
-                <div className="project-tech-stack">
-                  <span><b>Angular</b></span>
-                  <span><b>Node.js</b></span>
-                  <span><b>PostgreSQL</b></span>
-                  <span><b>Chart.js</b></span>
-                </div>
-                <div className="connection-line"></div>
-              </div>
-        
-              <div className="mars-module">
-                <FontAwesomeIcon icon={faTasks} className="project-icon" />
-                <h2>Task Management System</h2>
-                <p>
-                  Built a Kanban-style task manager with real-time updates, team collaboration features, and role-based access control.
-                </p>
-                <div className="project-tech-stack">
-                  <span><b>Vue.js</b></span>
-                  <span><b>Express.js</b></span>
-                  <span><b>MongoDB</b></span>
-                </div>
-                <div className="connection-line"></div>
-              </div>
-        
-              <div className="mars-module">
-                <FontAwesomeIcon icon={faBlog} className="project-icon" />
-                <h2>Blog Platform with Admin Panel</h2>
-                <p>
-                  A content management system (CMS) that allows users to create and manage blog posts, with admin controls for user management and content moderation.
-                </p>
-                <div className="project-tech-stack">
-                  <span><b>React</b></span>
-                  <span><b>Node.js</b></span>
-                  <span><b>MySQL</b></span>
-                </div>
-                <div className="connection-line"></div>
-              </div>
-        
+
+
+
+
+      case 'Venus':
+        setSurfaceImage('models/venus_surface.jpg'); // Venus-specific background
+        setSurfaceContent(
+          <div>
+            <h1>Work Experience</h1> {/* Title added at the top */}
+
+            <div className="work-experience-card">
+              <h2>Associate Software Engineer</h2>
+              <h3>DXC Technology</h3>
+              <p>
+                <FontAwesomeIcon icon={faCalendarAlt} /> 2020 - 2021
+              </p>
+              <p>
+                At DXC Technology, I navigated the complexities of handling healthcare data by developing real-time solutions that directly impacted the company's operational efficiency.
+                Beyond writing code, I immersed myself in understanding the end-to-end flow of healthcare data systems, anticipating potential bottlenecks before they became issues.
+                Collaborating with stakeholders, I not only improved API security but also built trust in our data exchange solutions, ensuring that healthcare professionals could rely on our platforms for faster and more secure operations.
+              </p>
+              <ul className="bullet-points">
+                <li><FontAwesomeIcon icon={faCheckCircle} /> Enabled healthcare providers to reduce administrative overhead by implementing solutions that processed patient data 30% faster.</li>
+                <li><FontAwesomeIcon icon={faCheckCircle} /> Fostered cross-team collaborations to integrate secure APIs, positioning the company to meet stringent healthcare compliance standards.</li>
+                <li><FontAwesomeIcon icon={faCheckCircle} /> Took ownership of UI enhancements, transforming end-user feedback into actionable design changes that led to better system adoption.</li>
+              </ul>
             </div>
-          );
-          setCustomClass('mars-overlay');  // Apply Mars-specific class
-          break;
-        
-        case 'Jupiter':
+
+            <div className="work-experience-card">
+              <h2>Java Full Stack Developer</h2>
+              <h3>PwC US</h3>
+              <p>
+                <FontAwesomeIcon icon={faCalendarAlt} /> 2021 - 2022
+              </p>
+              <p>
+                At PwC, I was more than just a developer; I was a trusted advisor on how to optimize critical systems for both performance and scalability.
+                My role required not only technical acumen but also the ability to foresee business challenges and propose solutions before they arose.
+                Leading initiatives that processed over 5 million transactions daily, I often found myself consulting with senior management, shaping strategic decisions on system architecture, and guiding teams toward scalable solutions.
+              </p>
+              <ul className="bullet-points">
+                <li><FontAwesomeIcon icon={faCheckCircle} /> Spearheaded the redesign of a platform serving 50,000+ users, resulting in a 25% increase in engagement—proving that technical solutions can drive business growth.</li>
+                <li><FontAwesomeIcon icon={faCheckCircle} /> Mentored junior developers, sharing insights on code optimization, which accelerated project delivery timelines by 15%.</li>
+                <li><FontAwesomeIcon icon={faCheckCircle} /> Trusted by senior leadership to advise on system scaling, I implemented strategies that ensured our APIs could handle a 20% boost in traffic without compromising performance.</li>
+              </ul>
+            </div>
+          </div>
+        );
+        setCustomClass('venus-overlay');  // Apply Venus-specific class
+        break;
+
+      case 'Earth':
+        setSurfaceContent(<EarthSurface />); // Render EarthSurface with scroll-responsive video
+        setCustomClass('earth-overlay');  // Apply Earth-specific class
+        break;
+        break;
+      // Import FontAwesome Icons
+
+
+      case 'Mars':
+        setSurfaceImage('models/mars_surface.jpg'); // Mars-specific surface background
+        setSurfaceContent(
+          <div className="mars-overlay">
+            <h1 className="mars-title">Mission to Mars: Full Stack Projects</h1>
+
+            <div className="mars-module">
+              <FontAwesomeIcon icon={faShoppingCart} className="project-icon" />
+              <h2>E-commerce Web Application</h2>
+              <p>
+                A fully functional e-commerce platform with product catalog, shopping cart, and payment gateway integration.
+              </p>
+              <div className="project-tech-stack">
+                <span><b>React</b></span>
+                <span><b>Node.js</b></span>
+                <span><b>MongoDB</b></span>
+                <span><b>Stripe API</b></span>
+              </div>
+              <div className="connection-line"></div>
+            </div>
+
+            <div className="mars-module">
+              <FontAwesomeIcon icon={faCommentDots} className="project-icon" />
+              <h2>Real-time Chat Application</h2>
+              <p>
+                Developed a real-time chat application using WebSocket technology, with features like private rooms and message encryption.
+              </p>
+              <div className="project-tech-stack">
+                <span><b>React</b></span>
+                <span><b>Node.js</b></span>
+                <span><b>Socket.io</b></span>
+              </div>
+              <div className="connection-line"></div>
+            </div>
+
+            <div className="mars-module">
+              <FontAwesomeIcon icon={faTachometerAlt} className="project-icon" />
+              <h2>Social Media Dashboard</h2>
+              <p>
+                A comprehensive dashboard for social media analytics, featuring real-time data visualization, post scheduling, and user engagement metrics.
+              </p>
+              <div className="project-tech-stack">
+                <span><b>Angular</b></span>
+                <span><b>Node.js</b></span>
+                <span><b>PostgreSQL</b></span>
+                <span><b>Chart.js</b></span>
+              </div>
+              <div className="connection-line"></div>
+            </div>
+
+            <div className="mars-module">
+              <FontAwesomeIcon icon={faTasks} className="project-icon" />
+              <h2>Task Management System</h2>
+              <p>
+                Built a Kanban-style task manager with real-time updates, team collaboration features, and role-based access control.
+              </p>
+              <div className="project-tech-stack">
+                <span><b>Vue.js</b></span>
+                <span><b>Express.js</b></span>
+                <span><b>MongoDB</b></span>
+              </div>
+              <div className="connection-line"></div>
+            </div>
+
+            <div className="mars-module">
+              <FontAwesomeIcon icon={faBlog} className="project-icon" />
+              <h2>Blog Platform with Admin Panel</h2>
+              <p>
+                A content management system (CMS) that allows users to create and manage blog posts, with admin controls for user management and content moderation.
+              </p>
+              <div className="project-tech-stack">
+                <span><b>React</b></span>
+                <span><b>Node.js</b></span>
+                <span><b>MySQL</b></span>
+              </div>
+              <div className="connection-line"></div>
+            </div>
+
+          </div>
+        );
+        setCustomClass('mars-overlay');  // Apply Mars-specific class
+        break;
+
+      case 'Jupiter':
         setSurfaceImage('models/jupiter_surface.jpg');
         setSurfaceContent(
           <div className="certifications-section">
@@ -569,9 +638,9 @@ case 'Venus':
             </div>
           </div>
         );
-        
-        
-        
+
+
+
         setCustomClass('jupiter-overlay');  // Apply Jupiter-specific class
         break;
       case 'Saturn':
@@ -591,7 +660,7 @@ case 'Venus':
             </div>
           </div>
         );
-        
+
         setCustomClass('saturn-overlay');  // Apply Saturn-specific class
         break;
       default:
@@ -603,11 +672,37 @@ case 'Venus':
     setShowSurfaceView(false);
     setCustomClass('');  // Reset custom class when the overlay is closed
   };
-  
+
+  const handleUserInteraction = () => {
+    setShowMessage(false);  // Hide the message when user interacts
+    if (interactionTimeoutRef.current) {
+      clearTimeout(interactionTimeoutRef.current);  // Clear timeout if user interacts before timeout
+    }
+  };
+
+  // Automatically hide the message after 5 seconds
+  useEffect(() => {
+    interactionTimeoutRef.current = setTimeout(() => {
+      setShowMessage(false);
+    }, 5000);  // Show message for 5 seconds
+
+    return () => {
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);  // Clear timeout on component unmount
+      }
+    };
+  }, []);
+
   return (
     <div className="app">
+       {showMessage && (
+        <div className="overlay-message">
+          <FaHandPointer className="hand-icon" /> {/* Use React Icon for hand */}
+          <p>click & drag to rotate</p>
+        </div>
+      )}
       <div className="dropdown">
-        <label htmlFor="planet-select">Select a planet: </label>
+        <label htmlFor="planet-select">Select a planet to explore its 3D view: </label>
         <select
           id="planet-select"
           onChange={(e) => setSelectedPlanet(e.target.value)}
@@ -638,87 +733,96 @@ case 'Venus':
         <MovingStars />
 
         <Suspense fallback={null}>
-  {selectedPlanet === null && <Sun />}
-  
-  {(selectedPlanet === null || selectedPlanet === "Mercury") && (
-    <Planet 
-      modelPath="models/Mercury_1_4878.glb" 
-      orbitRadiusX={6} 
-      orbitRadiusZ={3} 
-      speed={4.15 / 10}  // Slowed down by dividing by 10
-      scale={0.003} 
-      rotationSpeed={0.002} 
-      selected={selectedPlanet === "Mercury"}
-      onClick={() => handlePlanetClick("Mercury")}
-      name="Summary"
-    />
-  )}
-  {(selectedPlanet === null || selectedPlanet === "Venus") && (
-    <Planet 
-      modelPath="models/Venus_1_12103.glb" 
-      orbitRadiusX={10} 
-      orbitRadiusZ={6} 
-      speed={1.62 / 10}  // Slowed down by dividing by 10
-      scale={0.004} 
-      rotationSpeed={0.0015} 
-      selected={selectedPlanet === "Venus"}
-      onClick={() => handlePlanetClick("Venus")}
-      name="Experience"
-    />
-  )}
-  {(selectedPlanet === null || selectedPlanet === "Earth") && (
-    <Planet 
-      modelPath="models/Earth_1_12756.glb" 
-      orbitRadiusX={14} 
-      orbitRadiusZ={10} 
-      speed={1.0 / 10}  // Slowed down by dividing by 10
-      scale={0.004} 
-      rotationSpeed={0.0012} 
-      selected={selectedPlanet === "Earth"}
-      onClick={() => handlePlanetClick("Earth")}
-      name="Skills"
-    />
-  )}
-  {(selectedPlanet === null || selectedPlanet === "Mars") && (
-    <Planet 
-      modelPath="models/24881_Mars_1_6792.glb" 
-      orbitRadiusX={18} 
-      orbitRadiusZ={13} 
-      speed={0.53 / 10}  // Slowed down by dividing by 10
-      scale={0.0035} 
-      rotationSpeed={0.001} 
-      selected={selectedPlanet === "Mars"}
-      onClick={() => handlePlanetClick("Mars")}
-      name="Projects"
-    />
-  )}
-  {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
-    <Planet 
-      modelPath="models/Jupiter_1_142984.glb" 
-      orbitRadiusX={24} 
-      orbitRadiusZ={18} 
-      speed={0.084 / 10}  // Slowed down by dividing by 10
-      scale={0.008} 
-      rotationSpeed={0.0008} 
-      selected={selectedPlanet === "Jupiter"}
-      onClick={() => handlePlanetClick("Jupiter")}
-      name="Certifications"
-    />
-  )}
-  {(selectedPlanet === null || selectedPlanet === "Saturn") && (
-    <Planet 
-      modelPath="models/Saturn_1_120536.glb" 
-      orbitRadiusX={30} 
-      orbitRadiusZ={22} 
-      speed={0.034 / 10}  // Slowed down by dividing by 10
-      scale={0.007} 
-      rotationSpeed={0.0006} 
-      selected={selectedPlanet === "Saturn"}
-      onClick={() => handlePlanetClick("Saturn")}
-      name="Education"
-    />
-  )}
-</Suspense>
+        <OrbitControls
+            enableZoom={true}
+            onStart={() => handleUserInteraction()}  // Detect user interaction via OrbitControls (drag or zoom)
+          />
+          {selectedPlanet === null && <Sun />}
+
+          {(selectedPlanet === null || selectedPlanet === "Mercury") && (
+            <Planet
+              modelPath="models/Mercury_1_4878.glb"
+              orbitRadiusX={6}
+              orbitRadiusZ={3}
+              speed={4.15 / 10}  // Slowed down by dividing by 10
+              scale={0.003}
+              rotationSpeed={0.002}
+              selected={selectedPlanet === "Mercury"}
+              onClick={() => handlePlanetClick("Mercury")}
+              name="Summary"
+            />
+          )}
+          {(selectedPlanet === null || selectedPlanet === "Venus") && (
+            <Planet
+              modelPath="models/Venus_1_12103.glb"
+              orbitRadiusX={10}
+              orbitRadiusZ={6}
+              speed={1.62 / 10}  // Slowed down by dividing by 10
+              scale={0.004}
+              rotationSpeed={0.0015}
+              selected={selectedPlanet === "Venus"}
+              onClick={() => handlePlanetClick("Venus")}
+              name="Experience"
+            />
+          )}
+          {(selectedPlanet === null || selectedPlanet === "Earth") && (
+            <Planet
+              modelPath="models/Earth_1_12756.glb"
+              orbitRadiusX={14}
+              orbitRadiusZ={10}
+              speed={1.0 / 10}  // Slowed down by dividing by 10
+              scale={0.004}
+              rotationSpeed={0.0012}
+              selected={selectedPlanet === "Earth"}
+              onClick={() => handlePlanetClick("Earth")}
+              name="Skills"
+            />
+          )}
+          {(selectedPlanet === null || selectedPlanet === "Mars") && (
+            <Planet
+              modelPath="models/24881_Mars_1_6792.glb"
+              orbitRadiusX={18}
+              orbitRadiusZ={13}
+              speed={0.53 / 10}  // Slowed down by dividing by 10
+              scale={0.0035}
+              rotationSpeed={0.001}
+              selected={selectedPlanet === "Mars"}
+              onClick={() => handlePlanetClick("Mars")}
+              name="Projects"
+            />
+          )}
+          {(selectedPlanet === null || selectedPlanet === "Jupiter") && (
+            <Planet
+              modelPath="models/Jupiter_1_142984.glb"
+              orbitRadiusX={24}
+              orbitRadiusZ={18}
+              speed={0.4 / 10}  // Slowed down by dividing by 10
+              scale={0.008}
+              rotationSpeed={0.0008}
+              selected={selectedPlanet === "Jupiter"}
+              onClick={() => handlePlanetClick("Jupiter")}
+              name="Certifications"
+            />
+          )}
+          {(selectedPlanet === null || selectedPlanet === "Saturn") && (
+            <Planet
+              modelPath="models/Saturn_1_120536.glb"
+              orbitRadiusX={30}
+              orbitRadiusZ={22}
+              speed={0.034 / 10}  // Slowed down by dividing by 10
+              scale={0.007}
+              rotationSpeed={0.0006}
+              selected={selectedPlanet === "Saturn"}
+              onClick={() => handlePlanetClick("Saturn")}
+              name="Education"
+            />
+          )}
+          <mesh onClick={() => handleUserInteraction()}>  {/* Example clickable object */}
+            <sphereGeometry args={[1, 32, 32]} />
+            <meshStandardMaterial color="blue" />
+          </mesh>
+
+        </Suspense>
 
 
         {selectedPlanet === null && (
@@ -738,14 +842,14 @@ case 'Venus':
         <Controls selectedPlanet={selectedPlanet} planetRef={planetRef} />
       </Canvas>
 
-      <SurfaceOverlay 
-        showSurfaceView={showSurfaceView} 
-        onClose={handleCloseSurfaceView} 
-        imagePath={surfaceImage} 
-        content={surfaceContent} 
+      <SurfaceOverlay
+        showSurfaceView={showSurfaceView}
+        onClose={handleCloseSurfaceView}
+        imagePath={surfaceImage}
+        content={surfaceContent}
         customClass={customClass}  // Pass planet-specific class here
       />
-        </div>
+    </div>
   );
 }
 
