@@ -12,11 +12,21 @@ import { faHeart, faPalette, faBriefcase, faCalendarAlt, faCheckCircle } from '@
 import { faShoppingCart, faCommentDots, faTachometerAlt, faTasks, faBlog } from '@fortawesome/free-solid-svg-icons';
 import { FaHandPointer } from 'react-icons/fa';  // Import FontAwesome hand icon
 
+function FirstTimeTooltip({ onClose }) {
+  return (
+    <div className="first-time-tooltip">
+      <FaHandPointer className="hand-icon" />
+      <p>Select a planet from the dropdown or click on a planet to explore sections!</p>
+      <button onClick={onClose}>Got it!</button>
+    </div>
+  );
+}
+
+
 // Floating Probe Tooltip component
 function ProbeTooltip({ planetPosition, hovered }) {
   const probeRef = useRef();
 
-  // Probe Animation (Bobbing and Rotation)
   useFrame(() => {
     if (probeRef.current) {
       probeRef.current.position.y += Math.sin(Date.now() * 0.002) * 0.01; // Bobbing effect
@@ -43,6 +53,7 @@ function ProbeTooltip({ planetPosition, hovered }) {
     </>
   );
 }
+
 // Component to create an orbit path
 function EllipticalOrbitPath({ radiusX, radiusZ, color, lineWidth }) {
   const points = [];
@@ -95,31 +106,39 @@ function CameraController({ selectedPlanet, planetPositions }) {
     if (selectedPlanet && planetPositions[selectedPlanet]) {
       const [x, y, z] = planetPositions[selectedPlanet];
       if (prevPlanet.current !== selectedPlanet) {
-        // Zoom the camera into the planet for a "landing" effect
+        // Zoom the camera into the planet for a "highlight" effect
         gsap.to(camera.position, {
           x: x,
           y: y + 1,
-          z: z,
-          duration: 2,
+          z: z - 5, // Zoom closer briefly
+          duration: 1.5,
           ease: "power2.out",
-          onUpdate: () => camera.lookAt(x, y, z)
+          onComplete: () => {
+            gsap.to(camera.position, {
+              x: x,
+              y: y + 1,
+              z: z,
+              duration: 1,
+              ease: "power2.out",
+              onUpdate: () => camera.lookAt(x, y, z),
+            });
+          },
         });
         prevPlanet.current = selectedPlanet;
       }
     } else {
-      // Reset camera to default position
       gsap.to(camera.position, {
         x: 0,
         y: 15,
         z: 25,
         duration: 2,
         ease: "power2.out",
-        onUpdate: () => camera.lookAt(0, 0, 0)
+        onUpdate: () => camera.lookAt(0, 0, 0),
       });
       prevPlanet.current = null;
     }
   }, [selectedPlanet, planetPositions, camera]);
-
+  
   return null;
 }
 
@@ -412,6 +431,9 @@ function App() {
   const [hasInteracted, setHasInteracted] = useState(false);  // Track user interaction
   const [showMessage, setShowMessage] = useState(true);  // Control message visibility
   const interactionTimeoutRef = useRef(null);  // Reference to clear timeout if needed
+  const [showFirstTimeTooltip, setShowFirstTimeTooltip] = useState(true);
+
+
 
 
 
@@ -423,8 +445,11 @@ function App() {
     Jupiter: [24, 0, 18],
     Saturn: [30, 0, 22],
   };
-
+  const handleTooltipClose = () => {
+    setShowFirstTimeTooltip(false);
+  };
   const handlePlanetClick = (planet) => {
+    setShowFirstTimeTooltip(false);
     setShowSurfaceView(true);
 
     switch (planet) {
@@ -587,6 +612,7 @@ function App() {
           </div>
         );
         setCustomClass('mars-overlay');  // Apply Mars-specific class
+        
         break;
 
       case 'Jupiter':
@@ -695,6 +721,8 @@ function App() {
 
   return (
     <div className="app">
+      {showFirstTimeTooltip && <FirstTimeTooltip onClose={handleTooltipClose} />}
+
        {showMessage && (
         <div className="overlay-message">
           <FaHandPointer className="hand-icon" /> {/* Use React Icon for hand */}

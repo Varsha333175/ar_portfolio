@@ -182,10 +182,403 @@ button:hover {
 }
 
 /* Planet-Specific Overlay Styles */
-.mercury-overlay {
-  color: #ececec;
-  background-color: rgba(105, 105, 105, 0.9); /* Dark gray for Mercury */
+
+
+.venus-overlay {
+  color: #000;
+  background-color: rgba(255, 182, 193, 0.9); /* Light pink for Venus */
 }
+
+.earth-overlay {
+  color: #fff;
+  background-color: rgba(70, 130, 180, 0.9); /* Steel blue for Earth */
+}
+
+.mars-overlay {
+  color: #ffdead;
+  background-color: rgba(139, 69, 19, 0.9); /* Brownish red for Mars */
+}
+
+
+
+.saturn-overlay {
+  color: #000000;
+  background-color: rgba(210, 180, 140, 0.9); /* Tan for Saturn */
+}
+
+/* Nebula Background */
+.nebula-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  /* background: url('models/dark_nebula.webp') no-repeat center center fixed; */
+  background-size: cover;
+}
+
+/* Stars Styling */
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+/* Orbit Paths */
+.elliptical-orbit-path {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Planets */
+/* Planet Base Styles */
+.planet {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Mercury Specific Styles */
+.planet-mercury {
+  background-color: #6E6E6E; /* Dark metallic color */
+  box-shadow: 0 4px 10px rgba(255, 165, 0, 0.5); /* Slight orange glow */
+  background: radial-gradient(circle at 30% 30%, #AAAAAA, #6E6E6E, #4D4D4D); /* Subtle texture */
+}
+
+.planet-mercury:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+  box-shadow: 0 6px 12px rgba(255, 165, 0, 0.8); /* Enhanced glow on hover */
+}
+
+/* Text for Planet Labels */
+.planet-label {
+  position: absolute;
+  bottom: -25px;
+  text-align: center;
+  color: #FFF;
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+}
+
+
+.planet-venus {
+  background-color: #E9967A;
+}
+
+.planet-earth {
+  background-color: #4682B4;
+}
+
+.planet-mars {
+  background-color: #B22222;
+}
+
+
+.planet-saturn {
+  background-color: #D2B48C;
+}
+
+/* Earth Surface */
+.earth-surface {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}
+
+.earth-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.full-screen-video .earth-video {
+  height: 100vh;
+  width: 100vw;
+}
+
+.small-video .earth-video {
+  height: 200px;
+  width: 300px;
+}
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+/* Apply the new font to the entire accordion */
+.accordion-container {
+  width: 80%;
+  max-width: 1000px;
+  margin: 20px auto;
+  font-family: 'Roboto', sans-serif; /* Modern font */
+}
+
+.accordion-card {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #e0e0e0; /* Softer text color */
+  margin: 10px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.accordion-card:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #ffffff; /* Brighter on hover */
+}
+
+.accordion-header {
+  padding: 15px;
+  font-size: 1.2rem; /* Reduced font size */
+  background-color: rgba(255, 255, 255, 0.05);
+  font-weight: 500; /* Medium weight for better readability */
+  text-transform: uppercase;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.05rem; /* Slight letter spacing */
+  transition: color 0.3s ease;
+}
+
+.accordion-header:hover {
+  color: #ffd700; /* Golden color on hover */
+}
+
+.accordion-content {
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.15);
+  transition: max-height 0.3s ease;
+  font-size: 1rem; /* Regular size */
+  color: #d0d0d0; /* Light grey for content text */
+  line-height: 1.6; /* Improved readability with increased line-height */
+  text-shadow: none; /* Removed text-shadow for cleaner text in content */
+}
+
+.accordion-skill {
+  padding: 5px 0;
+  font-size: 1rem;
+  text-transform: capitalize;
+  color: #cccccc; /* Softer color for skills */
+}
+
+.accordion-skill:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-skill:hover {
+  color: #ffd700; /* Accent color for skills hover */
+}
+
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Roboto:wght@400&display=swap');
+
+/* Body and Root */
+body {
+  margin: 0;
+  /* overflow: auto; */
+}
+
+html, #root {
+  height: 100%;
+}
+
+#root {
+  background: linear-gradient(-45deg, #020024, #090979, #00d4ff, #0099ff);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* General Button Styling */
+button {
+  background: rgba(0, 255, 255, 0.3);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover {
+  background: rgba(0, 255, 255, 0.5);
+}
+
+/* App Layout */
+.app {
+  width: 100vw;  /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  background: #000; /* Dark space background */
+  overflow-y: hidden; /* Enable scrolling */
+  position: relative;
+}
+
+/* Surface Overlay */
+.surface-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh; /* Match the height of .app */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+  z-index: 10;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Close Button Styling */
+.close-button {
+  background: #FF6347;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  margin-top: 20px;
+  z-index: 20;
+  align-self: center;
+}
+
+.close-button:hover {
+  background: #FF4500;
+}
+
+/* Dropdown Styles */
+.dropdown {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+.dropdown select,
+.dropdown button {
+  color: black;
+  padding: 5px;
+  margin: 5px;
+  background-color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Flip Card Styles */
+.flip-card {
+  background-color: transparent;
+  width: 180px;
+  height: 280px;
+  perspective: 1000px;
+  margin: 15px;
+  display: inline-block;
+  transition: transform 0.6s ease;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s ease-in-out;
+  transform-style: preserve-3d;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Lighter shadow */
+  border-radius: 10px;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Reduced shadow */
+}
+
+.flip-card-front {
+  background-color: rgba(41, 128, 185, 0.7); /* Semi-transparent */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.flip-card-back {
+  background-color: rgba(241, 196, 15, 0.7); /* Semi-transparent */
+  color: black;
+  transform: rotateY(180deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+/* Grid layout for the cards */
+.card-grid {
+  position: relative;
+  z-index: 1; /* Ensure cards are displayed above the video */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 50px;
+  padding: 0 20px;
+  width: 100%; /* Match the width of .app */
+  height: 100%; /* Match the height of .app */
+  box-sizing: border-box;
+}
+
 
 .venus-overlay {
   color: #000;
@@ -400,72 +793,63 @@ button:hover {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Roboto:wght@400&display=swap');
 
 /* Mercury-specific styles */
+/* Mercury Overlay */
 .mercury-overlay {
-  
-  background-size: cover;
-  filter: brightness(1.1); /* Brighten the background slightly */
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  text-align: center;
-  color: white;
+  height: 100vh; /* Ensure full viewport height */
+  width: 100vw;  /* Ensure full viewport width */
+  background-size: cover;
+  background-position: center;
+  color: #ececec;
   font-family: 'Roboto', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
+/* Title styling */
 .mercury-overlay h1 {
-  font-size: 3rem; /* Large title */
+  font-size: 2.5rem;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(90deg, #00d2ff, #3a7bd5); /* Neon blue gradient */
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
   -webkit-background-clip: text;
-  color: transparent; /* Gradient text effect */
+  color: transparent;
+  text-align: center;
 }
 
-.mercury-overlay h1 i {
-  margin-right: 10px;
-  color: #00d2ff; /* Neon blue for speed */
-  animation: glow 1.5s infinite alternate; /* Glowing effect for icons */
-}
-
+/* Paragraph styling */
 .mercury-overlay p {
-  font-size: 1.4rem; /* Slightly smaller for a cleaner look */
-  max-width: 800px; /* Limit width for readability */
-  margin: 0 auto;
-  line-height: 1.8;  /* Increased line height for readability */
-  background-color: rgba(0, 0, 0, 0.6); /* Darker background for better text visibility */
+  font-size: 1.2rem;
+  max-width: 90%;
+  line-height: 1.6;
+  background-color: rgba(0, 0, 0, 0.6);
   padding: 20px;
   border-radius: 10px;
   color: #e0e0e0;
   font-family: 'Roboto', sans-serif;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.mercury-overlay p i {
-  color: #ffab00; /* Golden color for rocket */
-  margin-right: 10px;
-  animation: spin 2s linear infinite; /* Spinning rocket */
-}
-
+/* Content wrapper styling */
 .mercury-overlay div {
-  padding: 40px; /* Increased padding for better spacing */
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.3); /* Transparent background for container */
+  padding: 20px;
   max-width: 900px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Button Styles */
 .mercury-overlay button {
-  background-color: #ff5733; /* Bright, vibrant button color */
+  background-color: #ff5733;
   color: white;
-  border-radius: 25px; /* Rounded corners for a softer look */
+  border-radius: 25px;
   padding: 10px 20px;
-  margin-top: 20px; /* Add space between paragraph and button */
+  margin-top: 15px;
   font-family: 'Poppins', sans-serif;
   transition: background-color 0.3s ease;
   border: none;
@@ -473,36 +857,34 @@ button:hover {
 }
 
 .mercury-overlay button:hover {
-  background-color: #e74c3c; /* Darker shade on hover */
+  background-color: #e74c3c;
 }
 
-/* Icon Glow Effect */
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff, 0 0 30px #00d2ff;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mercury-overlay h1 {
+    font-size: 2rem;
   }
-  100% {
-    text-shadow: 0 0 20px #00d2ff, 0 0 30px #00d2ff, 0 0 40px #00d2ff;
-  }
-}
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  .mercury-overlay p {
+    font-size: 1rem;
+    padding: 10px;
   }
-  100% {
-    transform: rotate(360deg);
+
+  .mercury-overlay div {
+    padding: 10px;
   }
 }
 
-/* Apply glow animation to the bolt */
-.mercury-overlay h1 .fa-bolt {
-  animation: glow 1.5s infinite alternate;
-}
+@media (max-width: 480px) {
+  .mercury-overlay h1 {
+    font-size: 1.8rem;
+  }
 
-/* Apply spin to the rocket */
-.mercury-overlay p .fa-rocket {
-  animation: spin 3s linear infinite;
+  .mercury-overlay p {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
 }
 
 /* Venus-specific styles */
@@ -586,10 +968,9 @@ h1 {
 }
 
 
-
 /* Mars-specific styles */
 .mars-overlay {
-  background: transparent; /* Keep the background transparent */
+  background: transparent;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -608,25 +989,24 @@ h1 {
 
 .mars-title {
   position: fixed;
-  top: 20px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   color: #ff4500;
-  font-size: 2.3rem;
+  font-size: 1.8rem;
   text-align: center;
   font-family: 'Orbitron', sans-serif;
   z-index: 10;
 }
 
 .mars-module {
-  background-color: rgba(255, 69, 0, 0.2); /* Mars-orange with transparency */
+  background-color: rgba(255, 69, 0, 0.2);
   border: 2px solid #ff6347;
-  padding: 30px;
-  margin: 0 60px; /* Add more horizontal space between modules */
-  border-radius: 50%; /* Circular design for module */
-  box-shadow: 0 0 20px 5px rgba(255, 99, 71, 0.6);
-  min-width: 300px;
-  min-height: 300px;
+  padding: 20px;
+  margin: 0 20px; /* Reduced spacing for smaller screens */
+  border-radius: 50%; /* Circular design */
+  min-width: 280px;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -635,6 +1015,7 @@ h1 {
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 
 .mars-module:hover {
   transform: scale(1.1);
@@ -692,6 +1073,133 @@ h1 {
   top: -10px;
   right: -10px;
 }
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  /* Adjust title size */
+  .mars-title {
+    font-size: 2rem;
+  }
+
+  /* Scale down project modules */
+  .mars-module {
+    min-width: 250px;
+    min-height: 250px;
+    padding: 20px;
+    margin: 0 40px; /* Reduce space between modules */
+  }
+
+  /* Adjust text sizes */
+  .mars-module h2 {
+    font-size: 1.4rem;
+  }
+
+  .mars-module p {
+    font-size: 1rem;
+  }
+
+  .project-tech-stack span {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  /* Adjust connection line */
+  .connection-line {
+    width: 80px;
+  }
+}
+
+/* Responsive adjustments for Mars section */
+@media (max-width: 768px) {
+  /* Adjust title size */
+  .mars-title {
+    font-size: 1.8rem;
+  }
+
+  /* Scale down project modules */
+  .mars-module {
+    width: 180px; /* Adjusted width to fit smaller screens */
+    height: 180px; /* Adjusted height for a circular design */
+    min-width: 180px;
+    min-height: 180px;
+    padding: 15px;
+    margin: 0 20px; /* Reduce space between modules */
+  }
+
+  /* Adjust text sizes */
+  .mars-module h2 {
+    font-size: 1.1rem; /* Slightly larger for readability */
+    line-height: 1.3;
+  }
+
+  .mars-module p {
+    font-size: 0.85rem;
+    max-width: 90%; /* Keeps content inside the circle */
+  }
+
+  .project-tech-stack span {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
+  /* Adjust connection line */
+  .connection-line {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Adjust title size */
+  .mars-title {
+    font-size: 1.5rem;
+    padding-top: 10px; /* Additional padding for compact layout */
+  }
+
+  /* Scale down project modules */
+  .mars-module {
+    width: 150px; /* Further adjust width */
+    height: 150px; /* Circular design preserved */
+    min-width: 150px;
+    min-height: 150px;
+    padding: 8px;
+    margin: 0 10px; /* Narrower spacing for smaller screens */
+  }
+
+  /* Adjust text sizes */
+  .mars-module h2 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .mars-module p {
+    font-size: 0.75rem;
+    max-width: 85%; /* Keeps content inside the circle */
+  }
+
+  .project-tech-stack span {
+    font-size: 0.6rem;
+    padding: 2px 4px;
+  }
+
+  /* Adjust connection line */
+  .connection-line {
+    width: 50px;
+  }
+}
+
+/* Scroll hint effect */
+.scroll-hint {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 50px;
+  height: 100px;
+  background: linear-gradient(to left, rgba(255, 69, 0, 0.5), transparent);
+  pointer-events: none;
+  z-index: 20;
+}
+
+
 
 .jupiter-overlay {
   background: radial-gradient(circle, rgba(29,29,39,1) 0%, rgba(0,0,0,0.9) 100%);
@@ -877,4 +1385,495 @@ h1 {
   white-space: nowrap;
   color: #FFD700; /* Glowing gold text */
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+.probe-tooltip .tooltip-text {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.first-time-tooltip {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.hand-icon {
+  margin-right: 10px;
+  color: #ffd700;
+}
+.first-time-tooltip button {
+  background-color: #00bfff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  margin-left: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+/* Venus-specific styles */
+.venus-overlay {
+  background: linear-gradient(135deg, #fdfbfb, #ebedee); /* Light elegant gradient */
+  display: flex;
+  justify-content: flex-start; /* Start content from the top */
+  align-items: center;
+  flex-direction: column; /* Stack items vertically */
+  height: 100vh;
+  padding-top: 20px; /* Adjust padding for better visibility */
+  padding-bottom: 20px; /* Adjust padding at the bottom */
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  overflow-y: auto; /* Allow scrolling if needed */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+.venus-overlay::-webkit-scrollbar {
+  display: none;
+}
+
+h1 {
+  margin-bottom: 20px; /* Ensure the title has proper spacing */
+  font-size: 2rem; /* Adjust title size */
+  color: #ffc300; /* Golden title color */
+}
+.work-experience-card {
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent card background */
+  padding: 20px; /* Reduced padding */
+  margin: 10px; /* Reduced margin */
+  border-radius: 10px; /* Rounded corners for elegance */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow */
+  max-width: 600px; /* Increased width to avoid clumsy text wrapping */
+  text-align: center; /* Center align for flashcard style */
+  color: #d3d3d3; /* Light gray for headings */
+}
+
+.work-experience-card h2 {
+  color: #ffc300; /* Golden color for position title */
+  font-size: 1.6rem; /* Adjust font size */
+  font-weight: bold;
+  margin-bottom: 5px; /* Reduce margin */
+}
+
+.work-experience-card h3 {
+  color: #e0cba8; /* Muted beige for company name */
+  font-size: 1.3rem; /* Adjust font size */
+  margin-bottom: 5px; /* Reduce margin */
+}
+
+.work-experience-card .fa-calendar-alt {
+  margin-left: 5px;
+}
+
+.work-experience-card p {
+  font-size: 1.2rem; /* Slightly increased font size */
+  color: #ffffff; /* Changed to white for paragraph text */
+  margin-bottom: 15px; /* Reduced margin */
+  line-height: 1.6; /* Adjust line height for readability */
+}
+
+.work-experience-card .bullet-points {
+  font-size: 1.1rem; /* Slightly increased bullet point size */
+  color: #ffffff; /* Changed to white for bullet points */
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 5px; /* Reduced margin */
+}
+
+.work-experience-card .bullet-points li {
+  margin-bottom: 10px; /* Adjust margin for spacing */
+  display: flex;
+  align-items: flex-start;
+}
+
+.work-experience-card .bullet-points li i {
+  color: #ffc300; /* Golden color for bullet icons */
+  margin-right: 5px; /* Reduced spacing */
+}
+
+
+/* Mars Overlay */
+.mars-overlay {
+  background: transparent;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  scroll-snap-type: x mandatory; /* Snap to each project */
+  padding-top: 60px; /* Space for title */
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+.mars-overlay::-webkit-scrollbar {
+  display: none;
+}
+
+/* Title styling */
+.mars-title {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff4500;
+  font-size: 2.3rem;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  z-index: 10;
+}
+
+/* Project Module Styles */
+/* Project Module Styles */
+.mars-module {
+  background-color: rgba(255, 69, 0, 0.2); /* Mars-orange with transparency */
+  border: 2px solid #ff6347;
+  border-radius: 50%; /* Keeps a smooth, circular shape */
+  box-shadow: 0 0 10px rgba(255, 99, 71, 0.6);
+  width: 400px; /* Increased width for a wider shape */
+  height: 350px; /* Keep the height to create an oval appearance */
+  margin: 0 40px; /* Increased horizontal spacing between modules */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mars-module:hover {
+  transform: scale(1.05); /* Slightly enlarge on hover */
+  box-shadow: 0 0 20px rgba(255, 99, 71, 0.9);
+}
+
+/* Adjust text inside circular module */
+.mars-module h2 {
+  color: #ff6347;
+  font-size: 1.3rem; /* Larger font for title */
+  margin: 10px 0;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+
+.mars-module p {
+  font-size: 0.9rem;
+  color: #f0f0f0;
+  max-width: 90%;
+  text-align: center;
+  line-height: 1.3; /* Increased line height for readability */
+  margin-bottom: 10px;
+}
+
+/* Tech stack badges */
+.project-tech-stack {
+  margin-top: 10px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px; /* Space between badges */
+}
+
+.project-tech-stack span {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.8rem; /* Smaller text for badges */
+}
+
+
+/* Connecting Lines between modules */
+.connection-line {
+  position: absolute;
+  height: 2px;
+  width: 80px; /* Width to connect modules */
+  background-color: #ff6347;
+  top: 50%; /* Vertically center the line */
+  left: calc(100% + 20px);
+  transform: translateY(-50%);
+  z-index: -1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mars-title {
+    font-size: 1.8rem;
+  }
+
+  .mars-module {
+    padding: 20px;
+    min-width: 200px;
+    min-height: 250px;
+  }
+
+  .mars-module h2 {
+    font-size: 1.2rem;
+  }
+
+  .mars-module p {
+    font-size: 0.9rem;
+  }
+
+  .project-tech-stack span {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mars-title {
+    font-size: 1.6rem;
+  }
+
+  .mars-module {
+    min-width: 180px;
+    min-height: 220px;
+    padding: 15px;
+  }
+
+  .mars-module h2 {
+    font-size: 1rem;
+  }
+
+  .mars-module p {
+    font-size: 0.8rem;
+  }
+}
+
+
+.jupiter-overlay {
+  background: radial-gradient(circle, rgba(29,29,39,1) 0%, rgba(0,0,0,0.9) 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-height: 100vh; /* Ensure the content doesn’t exceed the viewport */
+  overflow-y: auto; /* Enable scrolling */
+}
+
+.certifications-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.certifications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+  gap: 20px;
+  max-height: 60vh; /* Ensure the grid doesn't exceed viewport height */
+  overflow-y: auto; /* Scrolls the grid content if necessary */
+  padding: 10px;
+}
+
+.certification-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.certification-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.certification-card img {
+  width: 50px;
+  margin-bottom: 15px;
+}
+
+.certification-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.certification-description {
+  font-size: 1em;
+  color: #FFFFFF;
+  opacity: 0.8;
+  margin-top: 10px;
+}
+
+/* Optional: Style for scrollbars */
+.certifications-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.certifications-grid::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+/* Saturn-specific overlay */
+.saturn-overlay {
+  background: radial-gradient(circle, rgba(44,44,84,1) 0%, rgba(0,0,0,0.9) 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.education-section {
+  text-align: center;
+  max-width: 800px;
+  margin: auto;
+}
+
+.education-title {
+  font-size: 2.5em;
+  color: #FFD700; /* Golden title to fit the cosmic theme */
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.education-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 800px;
+}
+
+.education-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.university-logo {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.university-info h2 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+  color: #FFD700;
+}
+
+.university-info h3 {
+  font-size: 1.4em;
+  color: #B0E0E6;
+}
+
+.university-info p {
+  font-size: 1.1em;
+  color: #FFFFFF;
+  opacity: 0.9;
+  margin: 5px 0;
+}
+
+/* Overlay message styling */
+.overlay-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;  /* Ensure it is on top of the 3D canvas */
+  pointer-events: none;  /* Prevent interaction with the message */
+}
+
+/* Styling the hand icon */
+.hand-icon {
+  font-size: 80px;  /* Adjust to match the size in the NASA example */
+  margin-bottom: 10px;  /* Space between icon and text */
+  color: white;  /* White color to match NASA’s style */
+  opacity: 1;  /* Ensure the icon is fully visible */
+}
+
+/* Styling the "click & drag to rotate" text */
+.overlay-message p {
+  font-size: 1.5rem;  /* Adjust font size as needed */
+  font-weight: 600;  /* Bold */
+  color: white;  /* White color to match NASA’s style */
+  text-align: center;  /* Center text */
+  margin: 0;
+  padding: 0;
+  text-transform: lowercase;  /* Ensure text is in lowercase */
+  opacity: 1;  /* Ensure the text is fully visible */
+  font-family: 'Arial', sans-serif;  /* Simple font like NASA */
+}
+
+.probe-tooltip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 16px;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-family: 'Orbitron', sans-serif;
+  white-space: nowrap;
+  color: #FFD700; /* Glowing gold text */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+.probe-tooltip .tooltip-text {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.first-time-tooltip {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.hand-icon {
+  margin-right: 10px;
+  color: #ffd700;
+}
+.first-time-tooltip button {
+  background-color: #00bfff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  margin-left: 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }

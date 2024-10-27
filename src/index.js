@@ -6,7 +6,7 @@ import LandingPage from './ARLandingPage';
 import './index.css';
 
 ReactDOM.render(
-  <Router>
+  <Router basename="/ar_portfolio">
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/portfolio" element={<App />} />
